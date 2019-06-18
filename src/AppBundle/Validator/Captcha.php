@@ -25,7 +25,7 @@ class Captcha extends Constraint
      * 
      * @return string
      */
-    public function validateBy()
+    public function validateBy(): string
     {
         return \get_class($this).'Validator';
     }

@@ -14,15 +14,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Task
  * 
- * @ORM\Entity
- * @ORM\Table
+ * @ORM\Table(name="tdl_task")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TaskRepository")
  */
 class Task
 {
     /**
      * @var int
      * @access private
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -31,30 +31,49 @@ class Task
     /**
      * @var \DateTime
      * @access private
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="createdAt", type="datetime")
      */
     private $createdAt;
 
     /**
      * @var string
      * @access private
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="title", type="string", length=60)
      * @Assert\NotBlank(message="Vous devez saisir un titre.")
+     * @Assert\Length(
+     *      min=2,
+     *      minMessage="Le titre doit etre de 2 caractères minimum.",
+     *      max=50,
+     *      maxMessage="Le titre doit etre de 50 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern="/^([a-zA-Z0-9]+ ?[a-zA-Z0-9]+)+$/",
+     *      message="Le titre ne peut contenir ques des lettres, des chiffres et des espaces."
+     * )
      */
     private $title;
 
     /**
      * @var string
      * @access private
-     * @ORM\Column(type="text")
+     * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank(message="Vous devez saisir du contenu.")
+     * @Assert\Length(
+     *      max=500,
+     *      maxMessage="Le contenu doit etre de 500 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern="/[<>]/",
+     *      match=false,
+     *      message="Le contenu ne doit pas contenir de < ou >"
+     * )
      */
     private $content;
-
+    
     /**
      * @var boolean
      * @access private
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(name="isDone", type="boolean")
      */
     private $isDone;
 

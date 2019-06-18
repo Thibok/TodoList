@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
+use Doctrine\ORM\ORMException;
 use AppBundle\ParamChecker\CaptchaChecker;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,7 @@ class TaskController extends Controller
      * Create Task
      * @access public
      * @param Request $request
+     * @param CaptchaChecker $captchaChecker
      * @Route("/tasks/create", name="tdl_task_create")
      * 
      * @return Response|RedirectResponse
@@ -36,15 +38,18 @@ class TaskController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $captchaChecker->check() && $form->isValid()) {
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
             $manager = $this->getDoctrine()->getManager();
             $task->setUser($this->getUser());
-
             $manager->persist($task);
-            $manager->flush();
 
-            $this->addFlash('success', 'La tâche a bien été ajoutée.');
-
+            try {
+                $manager->flush();
+                $this->addFlash('success', 'La tâche a bien été ajoutée.');
+            } catch(ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
+            
             return $this->redirectToRoute('task_list');
         }
 

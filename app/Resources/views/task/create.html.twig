@@ -4,9 +4,19 @@
 {% block body %}
     <div class="row flex-column mx-0">
         {{ form_start(form, {'attr': {'class': 'w-75 mx-auto', 'id': 'taskForm', 'novalidate': 'novalidate'}}) }}
-            {{ form_widget(form) }}
+            <div class="form-group">
+                {{ form_label(form.title, "Titre", {'label_attr' : {'class': 'control-label'}}) }}    
+                {{ form_widget(form.title) }}
+                <span class="invalid-feedback d-block" id="titleError"></span>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.content, "Contenu", {'label_attr' : {'class': 'control-label'}}) }}    
+                {{ form_widget(form.content) }}
+                <span class="invalid-feedback d-block" id="contentError"></span>
+            </div>
             <div class="d-flex justify-content-end">
-            {{ formElements.recaptcha('g-recaptcha btn btn-success', 'createTaskBtn', 'Ajouter') }}
+                <button class="btn btn-success" id="createTaskBtn">Ajouter</button>
+                {{ formElements.recaptcha() }}
             </div>
         {{ form_end(form) }}
 

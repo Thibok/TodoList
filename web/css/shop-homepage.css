@@ -56,3 +56,11 @@ footer {
 .form-control {
     border: 1px solid grey;
 }
+
+ul {
+    list-style-type: none;
+}
+
+#navContainer {
+    background-color: #e3f2fd;
+}

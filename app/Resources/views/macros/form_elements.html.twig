@@ -1,9 +1,8 @@
-{% macro recaptcha(class, id, content) %}
-    <button
-        class="{{ class }}"
-        id="{{ id }}"
+{% macro recaptcha() %}
+    <div
+        class="g-recaptcha"
         data-callback="formSubmit"
-        data-sitekey="6LedTakUAAAAADB9YnXJGrHYFeUff2A-iN2pxezq">
-        {{ content }}
-    </button>
+        data-sitekey="6LedTakUAAAAADB9YnXJGrHYFeUff2A-iN2pxezq"
+        data-size="invisible">
+    </div>
 {% endmacro %}

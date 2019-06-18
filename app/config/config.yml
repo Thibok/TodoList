@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    container.autowiring.strict_mode: true
 
 framework:
     #esi:             ~
@@ -30,6 +31,8 @@ framework:
     fragments:       ~
     http_method_override: true
     assets: ~
+    php_errors:
+        log: true
 
 # Twig Configuration
 twig:
@@ -69,5 +72,5 @@ swiftmailer:
     spool:     { type: memory }
 
 sensio_framework_extra:
-  router:
-    annotations: false
+    router:
+        annotations: false

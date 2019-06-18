@@ -30,25 +30,17 @@ class CaptchaValidator extends ConstraintValidator
     private $captcha;
 
     /**
-     * @var string
-     * @access private
-     */
-    private $env;
-
-    /**
      * Constructor
      *
      * @param RequestStack $request
      * @param string $captchaSecretKey
-     * @param string $env
      * 
      * @return void
      */
-    public function __construct(RequestStack $request, $captchaSecretKey, $env)
+    public function __construct(RequestStack $request, $captchaSecretKey)
     {
         $this->request = $request;
         $this->captcha = new ReCaptcha($captchaSecretKey);
-        $this->env = $env;
     }
 
     /**
@@ -59,16 +51,15 @@ class CaptchaValidator extends ConstraintValidator
      * 
      * @return void
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         $currentRequest = $this->request->getCurrentRequest();
 
-        if ($this->env != 'test') {
-            $resp = $this->captcha->verify($value, $currentRequest->getClientIp());
+        $resp = $this->captcha->verify($value, $currentRequest->getClientIp());
 
-            if (!$resp->isSuccess()) {
-                $this->context->addViolation($constraint->message);
-            }
+        if (!$resp->isSuccess()) {
+            $this->context->addViolation($constraint->message);
         }
+        
     }
 }

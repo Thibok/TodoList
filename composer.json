@@ -30,7 +30,8 @@
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",
         "incenteev/composer-parameter-handler": "^2.0",
-        "twig/twig": "^1.0||^2.0"
+        "twig/twig": "^1.0||^2.0",
+        "google/recaptcha": "^1.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

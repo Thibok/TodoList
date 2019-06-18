@@ -1,0 +1,9 @@
+{% macro recaptcha(class, id, content) %}
+    <button
+        class="{{ class }}"
+        id="{{ id }}"
+        data-callback="formSubmit"
+        data-sitekey="6LedTakUAAAAADB9YnXJGrHYFeUff2A-iN2pxezq">
+        {{ content }}
+    </button>
+{% endmacro %}

@@ -4,9 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\ParamChecker\CaptchaChecker;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class TaskController extends Controller
 {
@@ -19,22 +22,28 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/create", name="task_create")
+     * Create Task
+     * @access public
+     * @param Request $request
+     * @Route("/tasks/create", name="tdl_task_create")
+     * 
+     * @return Response|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, CaptchaChecker $captchaChecker): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $captchaChecker->check() && $form->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $task->setUser($this->getUser());
 
-            $em->persist($task);
-            $em->flush();
+            $manager->persist($task);
+            $manager->flush();
 
-            $this->addFlash('success', 'La tâche a été bien été ajoutée.');
+            $this->addFlash('success', 'La tâche a bien été ajoutée.');
 
             return $this->redirectToRoute('task_list');
         }

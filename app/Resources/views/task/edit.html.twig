@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
+{% block title %} {{ parent() }} Editer une tâche{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {{ form_start(form, {'action' : path('task_edit', { 'id' : task.id })}) }}
-            {{ form_widget(form) }}
-
-            <button type="submit" class="btn btn-success pull-right">Modifier</button>
-        {{ form_end(form) }}
+    <div class="row flex-column mx-0">
+        {% include 'form/task_form.html.twig' with {'taskPage': 'edit'} %}
+        <div class="mt-4">
+            <a href="{{ path('task_list') }}" class="btn btn-primary">Retour à la liste des tâches</a>
+        </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="{{ asset('js/manage_task.js') }}" async defer></script>
 {% endblock %}

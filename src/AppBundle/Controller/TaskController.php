@@ -1,13 +1,25 @@
 <?php
 
+/**
+ * Task Controller
+ */
+
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\ORM\ORMException;
+use AppBundle\ParamChecker\CaptchaChecker;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * TaskController
+ */
 class TaskController extends Controller
 {
     /**
@@ -19,23 +31,33 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/create", name="task_create")
+     * Create Task
+     * @access public
+     * @param Request $request
+     * @param CaptchaChecker $captchaChecker
+     * @Route("/tasks/create", name="tdl_task_create")
+     * 
+     * @return Response|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, CaptchaChecker $captchaChecker): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $task->setUser($this->getUser());
+            $manager->persist($task);
 
-            $em->persist($task);
-            $em->flush();
-
-            $this->addFlash('success', 'La tâche a été bien été ajoutée.');
-
+            try {
+                $manager->flush();
+                $this->addFlash('success', 'La tâche a bien été ajoutée.');
+            } catch(ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
+            
             return $this->redirectToRoute('task_list');
         }
 
@@ -43,51 +65,87 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/{id}/edit", name="task_edit")
+     * Edit Task
+     * @access public
+     * @param Task $task
+     * @param Request $request
+     * @param CaptchaChecker $captchaChecker
+     * @Route("/tasks/{id}/edit", name="tdl_task_edit", requirements={"id"="\d+"})
+     * 
+     * @return Response|RedirectResponse
      */
-    public function editAction(Task $task, Request $request)
+    public function editAction(Task $task, Request $request, CaptchaChecker $captchaChecker): Response
     {
-        $form = $this->createForm(TaskType::class, $task);
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
+        $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', 'La tâche a bien été modifiée.');
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', 'La tâche a bien été modifiée.');
+            } catch(ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
 
             return $this->redirectToRoute('task_list');
         }
 
-        return $this->render('task/edit.html.twig', [
-            'form' => $form->createView(),
-            'task' => $task,
-        ]);
+        return $this->render('task/edit.html.twig', ['form' => $form->createView()]);
     }
 
     /**
-     * @Route("/tasks/{id}/toggle", name="task_toggle")
+     * Toggle Task
+     * @access public
+     * @param Task $task
+     * @Route("/tasks/{id}/toggle", name="tdl_task_toggle", requirements={"id"="\d+"})
+     * 
+     * @return RedirectResponse
      */
-    public function toggleTaskAction(Task $task)
+    public function toggleTaskAction(Task $task): RedirectResponse
     {
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        $task->toggle(!$task->isDone());
+
+        try {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        } catch(ORMException $exception) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+        }
 
         return $this->redirectToRoute('task_list');
     }
 
     /**
-     * @Route("/tasks/{id}/delete", name="task_delete")
+     * Delete Task
+     * @access public
+     * @param Task $task
+     * @Route("/tasks/{id}/delete", name="tdl_task_delete", requirements={"id"="\d+"})
+     * 
+     * @return RedirectResponse
      */
-    public function deleteTaskAction(Task $task)
+    public function deleteAction(Task $task): RedirectResponse
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($task);
+
+        try {
+            $manager->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        } catch(ORMException $exception) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+        }
 
         return $this->redirectToRoute('task_list');
     }

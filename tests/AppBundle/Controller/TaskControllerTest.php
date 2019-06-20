@@ -38,7 +38,7 @@ class TaskControllerTest extends WebTestCase
      */
     public function testAddTask(): void
     {
-        $this->logIn();
+        $this->logIn('main');
         $crawler = $this->client->request('GET', '/tasks/create');
 
         $form = $crawler->selectButton('Ajouter')->form();
@@ -75,7 +75,7 @@ class TaskControllerTest extends WebTestCase
         $taskBeforeEdit = $manager->getRepository(Task::class)->findOneByTitle('Need update');
         $url = '/tasks/' .$taskBeforeEdit->getId(). '/edit';
 
-        $this->logIn();
+        $this->logIn('main');
         $crawler = $this->client->request('GET', $url);
 
         $form = $crawler->selectButton('Modifier')->form();
@@ -111,7 +111,7 @@ class TaskControllerTest extends WebTestCase
      */
     public function testAddTaskkWithBadValues($title, $content, $result): void
     {
-        $this->logIn();
+        $this->logIn('main');
         $crawler = $this->client->request('GET', '/tasks/create');
 
         $form = $crawler->selectButton('Ajouter')->form();
@@ -139,7 +139,7 @@ class TaskControllerTest extends WebTestCase
         $task = $manager->getRepository(Task::class)->findOneByTitle('Best task');
         $url = '/tasks/' .$task->getId(). '/edit';
 
-        $this->logIn();
+        $this->logIn('main');
         $crawler = $this->client->request('GET', $url);
 
         $form = $crawler->selectButton('Modifier')->form();
@@ -189,19 +189,138 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
-     * Log user
-     * @access private
+     * Test user can't manage task if he is not the owner
+     * @access public
+     * @param string action
+     * @dataProvider UrlActionValues
+     * 
+     * @return void
+     */
+    public function testUserCantManageTaskIfHeIsNotTheOwner($action): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Best task');
+
+        $url = '/tasks/' .$task->getId(). '/' .$action;
+        $this->logIn('secondary');
+
+        $this->client->request('GET', $url);
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    /**
+     * Url action of Tasks
+     * @access public
+     *
+     * @return array
+     */
+    public function UrlActionValues()
+    {
+        return [
+            [
+                'edit'
+            ],
+            [
+                'toggle'
+            ],
+            [
+                'delete'
+            ]
+        ];
+    }
+
+    /**
+     * Test delete Task
+     * @access public
      *
      * @return void
      */
-    private function logIn(): void
+    public function testDeleteTask(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Delete me');
+        $url = '/tasks/' .$task->getId(). '/delete';
+
+        $this->logIn('main');
+
+        $this->client->request('GET', $url);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
+
+        $this->client->request('GET', $url);
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * Test toggle Task
+     * @access public
+     *
+     * @return void
+     */
+    public function testToggleTask(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Toggle me');
+        $url = '/tasks/' .$task->getId(). '/toggle';
+
+        $this->logIn('main');
+
+        $this->client->request('GET', $url);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
+
+        $toggleTask = $manager->getRepository(Task::class)->findOneByTitle('Toggle me');
+
+        $this->assertTrue($toggleTask->isDone());
+    }
+
+    /**
+     * Test 
+     * @access public
+     * @param string action
+     * @dataProvider UrlActionValues
+     * 
+     * @return void
+     */
+    public function testUrlWithBadParam($action): void
+    {
+        $url = '/tasks/fdfd/' .$action;
+        $this->logIn('main');
+
+        $this->client->request('GET', $url);
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * Log user
+     * @access private
+     * @param string $userRole
+     *
+     * @return void
+     */
+    private function logIn($userRole): void
     {
         $session = $this->client->getContainer()->get('session');
 
         $firewallName = 'main';
         $firewallContext = 'main';
-        $manager = $this->client->getContainer()->get('doctrine')->getManager(); 
-        $user = $manager->getRepository('AppBundle:User')->findOneByUsername('BryanTest'); 
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        if ($userRole == 'main') {
+            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('BryanTest'); 
+        }
+
+        if ($userRole == 'secondary') {
+            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('JeanTest'); 
+        }
 
         $token = new UsernamePasswordToken($user, $user->getPassword(), $firewallName, $user->getRoles());
         $session->set('_security_'.$firewallContext, serialize($token));

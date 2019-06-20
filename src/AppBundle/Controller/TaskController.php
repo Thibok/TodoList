@@ -70,7 +70,7 @@ class TaskController extends Controller
      * @param Task $task
      * @param Request $request
      * @param CaptchaChecker $captchaChecker
-     * @Route("/tasks/{id}/edit", name="tdl_task_edit")
+     * @Route("/tasks/{id}/edit", name="tdl_task_edit", requirements={"id"="\d+"})
      * 
      * @return Response|RedirectResponse
      */
@@ -98,28 +98,54 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/{id}/toggle", name="task_toggle")
+     * Toggle Task
+     * @access public
+     * @param Task $task
+     * @Route("/tasks/{id}/toggle", name="tdl_task_toggle", requirements={"id"="\d+"})
+     * 
+     * @return RedirectResponse
      */
-    public function toggleTaskAction(Task $task)
+    public function toggleTaskAction(Task $task): RedirectResponse
     {
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        $task->toggle(!$task->isDone());
+
+        try {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        } catch(ORMException $exception) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+        }
 
         return $this->redirectToRoute('task_list');
     }
 
     /**
-     * @Route("/tasks/{id}/delete", name="task_delete")
+     * Delete Task
+     * @access public
+     * @param Task $task
+     * @Route("/tasks/{id}/delete", name="tdl_task_delete", requirements={"id"="\d+"})
+     * 
+     * @return RedirectResponse
      */
-    public function deleteTaskAction(Task $task)
+    public function deleteAction(Task $task): RedirectResponse
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($task);
+
+        try {
+            $manager->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        } catch(ORMException $exception) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+        }
 
         return $this->redirectToRoute('task_list');
     }

@@ -21,6 +21,11 @@ class UserFixtures extends Fixture
     const MAIN_USER_TEST_REFERENCE = 'main-user-test-reference';
 
     /**
+     * @var public
+     */
+    const SECONDARY_USER_TEST_REFERENCE = 'secondary-user-test-reference';
+
+    /**
      * Load fixtures
      * @access public
      * @param ObjectManager $manager
@@ -34,9 +39,16 @@ class UserFixtures extends Fixture
         $mainUser->setPassword('goodpassword');
         $mainUser->setEmail('goodemail@yahoo.com');
 
+        $secondaryUser = new User;
+        $secondaryUser->setUsername('JeanTest');
+        $secondaryUser->setPassword('goodpass');
+        $secondaryUser->setEmail('goodemail@gmail.com');
+
         $manager->persist($mainUser);
+        $manager->persist($secondaryUser);
         $manager->flush();
 
         $this->addReference(self::MAIN_USER_TEST_REFERENCE, $mainUser);
+        $this->addReference(self::SECONDARY_USER_TEST_REFERENCE, $secondaryUser);
     }
 }

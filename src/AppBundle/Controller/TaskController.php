@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Task Controller
+ */
+
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Task;
@@ -11,7 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * TaskController
+ */
 class TaskController extends Controller
 {
     /**
@@ -57,26 +65,36 @@ class TaskController extends Controller
     }
 
     /**
-     * @Route("/tasks/{id}/edit", name="task_edit")
+     * Edit Task
+     * @access public
+     * @param Task $task
+     * @param Request $request
+     * @param CaptchaChecker $captchaChecker
+     * @Route("/tasks/{id}/edit", name="tdl_task_edit")
+     * 
+     * @return Response|RedirectResponse
      */
-    public function editAction(Task $task, Request $request)
+    public function editAction(Task $task, Request $request, CaptchaChecker $captchaChecker): Response
     {
-        $form = $this->createForm(TaskType::class, $task);
+        if (!$this->getUser()->isEqualTo($task->getUser())) {
+            throw new AccessDeniedHttpException();
+        }
 
+        $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', 'La tâche a bien été modifiée.');
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', 'La tâche a bien été modifiée.');
+            } catch(ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
 
             return $this->redirectToRoute('task_list');
         }
 
-        return $this->render('task/edit.html.twig', [
-            'form' => $form->createView(),
-            'task' => $task,
-        ]);
+        return $this->render('task/edit.html.twig', ['form' => $form->createView()]);
     }
 
     /**

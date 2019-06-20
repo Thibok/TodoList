@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>To Do List app</title>
+        <title>{% block title %}To Do List -{% endblock %}</title>
         <!-- Bootstrap Core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <!-- Custom CSS -->
@@ -54,7 +54,7 @@
         </nav>
 
         <!-- Page Content -->
-        <div class="container">
+        <div id="wrap" class="container">
             <div class="row">
                 <div class="col-md-12">
                     {% for flash_message in app.flashes('success') %}
@@ -76,7 +76,7 @@
 
             <br />
 
-            <div class="row">
+            <div id="main" class="row">
                 <div class="col-md-12">
                     {% block body %}{% endblock %}
                 </div>
@@ -84,7 +84,7 @@
         </div>
         <!-- /.container -->
 
-        <div class="container">
+        <div id="footerContainer" class="container">
             <footer class="page-footer">
                 <div class="footer-copyright text-right">Copyright &copy; OpenClassrooms</div>
             </footer>

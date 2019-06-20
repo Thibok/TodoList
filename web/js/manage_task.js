@@ -70,7 +70,14 @@ $(function () {
     $("#createTaskBtn").click(function (event) {
         event.preventDefault();
         if (validateForm()) {
-            console.log(validateForm());
+            grecaptcha.reset();
+            grecaptcha.execute();
+        }
+    });
+
+    $("#editTaskBtn").click(function (event) {
+        event.preventDefault();
+        if (validateForm()) {
             grecaptcha.reset();
             grecaptcha.execute();
         }

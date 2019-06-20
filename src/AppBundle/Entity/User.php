@@ -137,6 +137,8 @@ class User implements UserInterface, EquatableInterface
     public function setEmail($email): User
     {
         $this->email = $email;
+
+        return $this;
     }
 
     /**

@@ -38,14 +38,30 @@ class UserFixtures extends Fixture
         $mainUser->setUsername('BryanTest');
         $mainUser->setPassword('goodpassword');
         $mainUser->setEmail('goodemail@yahoo.com');
+        $mainUser->setRole('ROLE_USER');
 
         $secondaryUser = new User;
         $secondaryUser->setUsername('JeanTest');
         $secondaryUser->setPassword('goodpass');
         $secondaryUser->setEmail('goodemail@gmail.com');
+        $secondaryUser->setRole('ROLE_USER');
+
+        $adminUser = new User;
+        $adminUser->setUsername('SuperAdmin');
+        $adminUser->setPassword('adminpass');
+        $adminUser->setEmail('superadmin@gmail.com');
+        $adminUser->setRole('ROLE_ADMIN');
+
+        $userForUpdate = new User;
+        $userForUpdate->setUsername('updateUsername');
+        $userForUpdate->setPassword('updatePass');
+        $userForUpdate->setEmail('updateMail@gmail.com');
+        $userForUpdate->setRole('ROLE_USER');
 
         $manager->persist($mainUser);
         $manager->persist($secondaryUser);
+        $manager->persist($adminUser);
+        $manager->persist($userForUpdate);
         $manager->flush();
 
         $this->addReference(self::MAIN_USER_TEST_REFERENCE, $mainUser);

@@ -48,4 +48,23 @@ class UserListener
         $encoded = $this->encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($encoded);
     }
+
+    /**
+     * Pre update event
+     * @access public
+     * @param LifecycleEventArgs $args
+     * 
+     * @return void
+     */
+    public function preUpdate(LifecycleEventArgs $args): void
+    {
+        $user = $args->getObject();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $encoded = $this->encoder->encodePassword($user, $user->getPassword());
+        $user->setPassword($encoded);
+    }
 }

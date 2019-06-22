@@ -1,0 +1,38 @@
+{% import "macros/form_elements.html.twig" as formElements %}
+
+{{ form_start(form, {'attr': {'class': 'mx-auto', 'id': 'userForm', 'novalidate': 'novalidate'}}) }}
+    <div class="form-group">
+        {{ form_label(form.username, "Nom d'utilisateur", {'label_attr' : {'class': 'control-label'}}) }}    
+        {{ form_widget(form.username) }}
+        <span class="invalid-feedback d-block" id="usernameError"></span>
+    </div>
+    <div class="form-group">
+        {{ form_label(form.password.first, "Mot de passe", {'label_attr' : {'class': 'control-label'}}) }}    
+        {{ form_widget(form.password.first) }}
+        <span class="invalid-feedback d-block" id="firstPassError"></span>
+    </div>
+    <div class="form-group">
+        {{ form_label(form.password.second, "Tapez le mot de passe à nouveau", {'label_attr' : {'class': 'control-label'}}) }}    
+        {{ form_widget(form.password.second) }}
+        <span class="invalid-feedback d-block" id="secondPassError"></span>
+    </div>
+    <div class="form-group">
+        {{ form_label(form.email, "Adresse email", {'label_attr' : {'class': 'control-label'}}) }}    
+        {{ form_widget(form.email) }}
+        <span class="invalid-feedback d-block" id="emailError"></span>
+    </div>
+    <div class="form-group">
+        {{ form_label(form.role, "Role", {'label_attr' : {'class': 'control-label'}}) }}    
+        {{ form_widget(form.role) }}
+        <span class="invalid-feedback d-block" id="roleError"></span>
+    </div>
+    <div id="submitBtnContainer" class="d-flex flex-column align-items-center">
+        {% if userPage == 'create' %}
+            <button class="btn btn-success mt-2 mb-3" id="createUserBtn">Ajouter</button>
+        {% elseif userPage == 'edit' %}
+            <button class="btn btn-success mt-2 mb-3" id="editUserBtn">Modifier</button>
+        {% endif %}
+        {{ formElements.recaptcha('g-recaptcha') }}
+    </div>
+    {{ form_rest(form) }}
+{{ form_end(form) }}

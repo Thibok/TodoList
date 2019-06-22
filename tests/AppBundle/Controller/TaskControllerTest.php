@@ -281,14 +281,14 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
-     * Test 
+     * Test task urls with bad url param
      * @access public
      * @param string action
      * @dataProvider UrlActionValues
      * 
      * @return void
      */
-    public function testUrlWithBadParam($action): void
+    public function testUrlWithBadUrlParam($action): void
     {
         $url = '/tasks/fdfd/' .$action;
         $this->logIn('main');

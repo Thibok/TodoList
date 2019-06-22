@@ -32,3 +32,8 @@ services:
     AppBundle\ParamChecker\CaptchaChecker:
         arguments:
             $env: '%kernel.environment%'
+    
+    AppBundle\EventListener\UserListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist}
+            - { name: doctrine.event_listener, event: preUpdate}

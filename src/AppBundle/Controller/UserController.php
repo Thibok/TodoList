@@ -1,13 +1,22 @@
 <?php
 
+/**
+ * User Controller
+ */
+
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\ParamChecker\CaptchaChecker;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * UserController
+ */
 class UserController extends Controller
 {
     /**
@@ -19,24 +28,31 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/users/create", name="user_create")
+     * Create User
+     * @access public
+     * @param Request $request
+     * @param CaptchaChecker $captchaChecker
+     * @Route("/users/create", name="tdl_user_create")
+     * 
+     * @return Response|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, CaptchaChecker $captchaChecker): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $manager->persist($user);
 
-            $em->persist($user);
-            $em->flush();
-
-            $this->addFlash('success', "L'utilisateur a bien été ajouté.");
+            try {
+                $manager->flush();
+                $this->addFlash('success', "L'utilisateur a bien été ajouté.");
+            } catch (ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
 
             return $this->redirectToRoute('user_list');
         }
@@ -45,21 +61,29 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/users/{id}/edit", name="user_edit")
+     * Edit User
+     * @access public
+     * @param User $user
+     * @param CaptchaChecker $captchaChecker
+     * @param Request $request
+     * @Route("/users/{id}/edit", name="tdl_user_edit")
+     * 
+     * @return Response|RedirectResponse
      */
-    public function editAction(User $user, Request $request)
+    public function editAction(User $user, CaptchaChecker $captchaChecker, Request $request): Response
     {
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', "L'utilisateur a bien été modifié");
+        if ($form->isSubmitted() && $captchaChecker->check($request) && $form->isValid()) {
+            
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', "L'utilisateur a bien été modifié");
+            } catch (ORMException $exception) {
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
 
             return $this->redirectToRoute('user_list');
         }

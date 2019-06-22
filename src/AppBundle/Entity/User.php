@@ -14,9 +14,12 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Table("user")
+ * User
+ *
+ * @ORM\Table(name="tdl_user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
- * @UniqueEntity("email")
+ * @UniqueEntity(fields="email", message="Cette email est déjà utilisée")
+ * @UniqueEntity(fields="username", message="Ce nom d'utilisateur est déjà utilisé")
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -32,26 +35,61 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string
      * @access private
-     * @ORM\Column(type="string", length=25, unique=true)
-     * @Assert\NotBlank(message="Vous devez saisir un nom d'utilisateur.")
+     * @ORM\Column(name="username", type="string", length=30, unique=true)
+     * @Assert\NotBlank(message = "Vous devez saisir un nom d'utilisateur.")
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 30,
+     *      minMessage = "Le nom d'utilisateur doit être de 4 caractères minimum.",
+     *      maxMessage = "Le nom d'utilisateur doit être de 30 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern = "/^[a-zA-Z0-9_-]{4,}$/",
+     *      message = "Le nom d'utilisateur peut contenir lettres, chiffres et tirets."
+     * )
      */
     private $username;
 
     /**
      * @var string
      * @access private
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(name="password", type="string", length=64)
+     * @Assert\NotBlank(message = "Vous devez saisir un mot de passe.")
+     * @Assert\Length(
+     *      min = 8,
+     *      max = 48,
+     *      minMessage = "Le mot de passe doit être de 8 caractères minimum.",
+     *      maxMessage = "Le mot de passe doit être de 48 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern = "/^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/",
+     *      message = "Le mot de passe doit contenir au moins une lettre et un chiffre."
+     * )
      */
     private $password;
 
     /**
      * @var string
      * @access private
-     * @ORM\Column(type="string", length=60, unique=true)
-     * @Assert\NotBlank(message="Vous devez saisir une adresse email.")
-     * @Assert\Email(message="Le format de l'adresse n'est pas correcte.")
+     * @ORM\Column(name="email", type="string", length=60, unique=true)
+     * @Assert\NotBlank(message = "Vous devez saisir une adresse email.")
+     * @Assert\Length(
+     *      min = 7,
+     *      max = 60,
+     *      minMessage = "L'adresse email doit être de 7 caractères minimum.",
+     *      maxMessage = "L'adresse email doit être de 60 caractères maximum."
+     * )
+     * @Assert\Email(message = "Merci d'entrer une adresse email valide.")
      */
     private $email;
+
+    /**
+     * @var array
+     * @access private
+     * @ORM\Column(name="role", type="string", length=20)
+     * @Assert\NotBlank(message="Vous devez choisir un rôle.")
+     */
+    private $role;
 
     /**
      * Get id
@@ -144,9 +182,48 @@ class User implements UserInterface, EquatableInterface
     /**
      * {@inheritDoc}
      */
-    public function getRoles(): array
+    public function getRoles(): ?array
     {
-        return array('ROLE_USER');
+        return [$this->role];
+    }
+
+    /**
+     * Get role
+     * @access public
+     * 
+     * @return string
+     */
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set role
+     * @access public
+     * @param string role
+     * 
+     * @return User
+     */
+    public function setRole(string $role): User
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * add role
+     * @access public
+     * @param string role
+     * 
+     * @return User
+     */
+    public function addRole(string $role)
+    {
+        $this->roles[] = $role;
+
+        return $this;
     }
 
     /**

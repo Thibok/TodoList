@@ -1,6 +1,6 @@
 {% import "macros/form_elements.html.twig" as formElements %}
 
-{{ form_start(form, {'attr': {'class': 'w-75 mx-auto', 'id': 'taskForm', 'novalidate': 'novalidate'}}) }}
+{{ form_start(form, {'attr': {'class': 'mx-auto', 'id': 'taskForm', 'novalidate': 'novalidate'}}) }}
     <div class="form-group">
         {{ form_label(form.title, "Titre", {'label_attr' : {'class': 'control-label'}}) }}    
         {{ form_widget(form.title) }}
@@ -11,13 +11,13 @@
         {{ form_widget(form.content) }}
         <span class="invalid-feedback d-block" id="contentError"></span>
     </div>
-    <div id="submitBtnContainer" class="d-flex justify-content-end">
-        {{ formElements.recaptcha('g-recaptcha', 'taskRecaptcha') }}
+    <div id="submitBtnContainer" class="d-flex flex-column align-items-center">
         {% if taskPage == 'create' %}
-            <button class="btn btn-success mt-2" id="createTaskBtn">Ajouter</button>
+            <button class="btn btn-success mt-2 mb-3" id="createTaskBtn">Ajouter</button>
         {% elseif taskPage == 'edit' %}
-            <button class="btn btn-success mt-2" id="editTaskBtn">Modifier</button>
+            <button class="btn btn-success mt-2 mb-3" id="editTaskBtn">Modifier</button>
         {% endif %}
+        {{ formElements.recaptcha('g-recaptcha') }}
     </div>
     {{ form_rest(form) }}
 {{ form_end(form) }}

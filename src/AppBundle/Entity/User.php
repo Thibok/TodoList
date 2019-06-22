@@ -205,23 +205,9 @@ class User implements UserInterface, EquatableInterface
      * 
      * @return User
      */
-    public function setRole(string $role): User
+    public function setRole($role): User
     {
         $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * add role
-     * @access public
-     * @param string role
-     * 
-     * @return User
-     */
-    public function addRole(string $role)
-    {
-        $this->roles[] = $role;
 
         return $this;
     }

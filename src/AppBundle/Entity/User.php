@@ -25,6 +25,11 @@ class User implements UserInterface, EquatableInterface
 {
     /**
      * @var int
+     */
+    const USER_PER_PAGE = 10;
+
+    /**
+     * @var int
      * @access private
      * @ORM\Column(type="integer")
      * @ORM\Id

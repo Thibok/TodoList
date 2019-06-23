@@ -91,3 +91,9 @@ ul {
 h1 {
     font-size: 2.2em;
 }
+
+@media screen and (max-width: 348px) {
+    #userListTitle {
+        text-align: center;
+    }
+}

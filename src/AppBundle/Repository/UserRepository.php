@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * User Repository
@@ -6,7 +7,9 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * UserRepository
@@ -16,5 +19,24 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
+    /**
+     * Get paginate users
+     * @access public
+     * @param int $page
+     * 
+     * @return Paginator
+     */
+    public function getUsers($page): Paginator
+    {
+        $query = $this->createQueryBuilder('u')
+            ->getQuery()
+        ;
 
+        $query
+            ->setFirstResult(($page - 1) * User::USER_PER_PAGE)
+            ->setMaxResults(User::USER_PER_PAGE)
+        ;
+
+        return new Paginator($query, true);
+    }
 }

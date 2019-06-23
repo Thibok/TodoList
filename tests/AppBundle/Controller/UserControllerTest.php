@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * UserController Test
@@ -237,6 +238,28 @@ class UserControllerTest extends WebTestCase
         $response = $this->client->getResponse();
 
         $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * Test listAction
+     * @access public
+     *
+     * @return void
+     */
+    public function testListUsers()
+    {
+        $this->logIn('admin');
+        $crawler = $this->client->request('GET', '/users');
+
+        $nbUser = $crawler->filter('.user-row')->count();
+        $firstUserName = $crawler->filter('.td-user-username')->eq(0)->text();
+        $firstUserEmail = $crawler->filter('.td-user-email')->eq(0)->text();
+        $firstUserRole = $crawler->filter('.td-user-role')->eq(0)->text();
+
+        $this->assertEquals(10, $nbUser);
+        $this->assertSame('BryanTest', $firstUserName);
+        $this->assertSame('goodemail@yahoo.com', $firstUserEmail);
+        $this->assertSame('Utilisateur', $firstUserRole);
     }
 
     /**

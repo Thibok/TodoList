@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * User Controller
@@ -20,11 +21,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class UserController extends Controller
 {
     /**
-     * @Route("/users", name="user_list")
+     * List users
+     * @access public
+     * @Route("/users", name="tdl_user_list")
+     * 
+     * @return Response
      */
-    public function listAction()
+    public function listAction(): Response
     {
-        return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('AppBundle:User')->findAll()]);
+        $users = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository(User::class)
+            ->getUsers(1)
+        ;
+
+        return $this->render('user/list.html.twig', ['users' => $users]);
     }
 
     /**
@@ -54,7 +66,7 @@ class UserController extends Controller
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
 
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('tdl_user_list');
         }
 
         return $this->render('user/create.html.twig', ['form' => $form->createView()]);
@@ -85,7 +97,7 @@ class UserController extends Controller
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
 
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('tdl_user_list');
         }
 
         return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);

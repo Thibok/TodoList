@@ -7,7 +7,7 @@
             {% include 'form/task_form.html.twig' with {'taskPage': 'edit'} %}
         </div>
         <div class="mt-4">
-            <a href="{{ path('task_list') }}" class="btn btn-primary">Retour à la liste des tâches</a>
+            <a href="{{ path('tdl_task_list', {'status' : (task.isDone) ? 'finish' : 'current'}) }}" class="btn btn-primary">Retour à la liste des tâches</a>
         </div>
     </div>
 {% endblock %}

@@ -257,8 +257,8 @@ class UserControllerTest extends WebTestCase
         $firstUserRole = $crawler->filter('.td-user-role')->eq(0)->text();
 
         $this->assertEquals(10, $nbUser);
-        $this->assertSame('BryanTest', $firstUserName);
-        $this->assertSame('goodemail@yahoo.com', $firstUserEmail);
+        $this->assertSame('newUser', $firstUserName);
+        $this->assertSame('newUser@yahoo.com', $firstUserEmail);
         $this->assertSame('Utilisateur', $firstUserRole);
     }
 

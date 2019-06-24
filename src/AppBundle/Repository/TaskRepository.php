@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * TaskRepository
@@ -17,5 +19,31 @@ use Doctrine\ORM\EntityRepository;
  */
 class TaskRepository extends EntityRepository
 {
+    /**
+     * Get paginate tasks
+     * @access public
+     * @param int $page
+     * @param int $userId
+     * @param boolean $isDone
+     * 
+     * @return Paginator
+     */
+    public function getTasks($page, $userId, $isDone): Paginator
+    {
+        $query = $this->createQueryBuilder('t')
+            ->where('t.user = :userId')
+            ->setParameter('userId', $userId)
+            ->andWhere('t.isDone = :isDone')
+            ->setParameter('isDone', $isDone)
+            ->orderBy('t.id', 'DESC')
+            ->getQuery()
+        ;
 
+        $query
+            ->setFirstResult(($page - 1) * Task::TASK_PER_PAGE)
+            ->setMaxResults(Task::TASK_PER_PAGE)
+        ;
+
+        return new Paginator($query, true);
+    }
 }

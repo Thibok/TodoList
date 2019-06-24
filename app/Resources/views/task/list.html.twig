@@ -19,7 +19,7 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h4 class="card-title task-title text-truncate"><a id="task-title-link-{{ loop.index0 }}" class="text-decoration-none task-link" href="#">{{ task.title }}</a></h4>
-                            <p id="task-content-{{ loop.index0 }}" class="text-truncate card-text">{{ task.content }}</p>
+                            <p id="task-content-{{ loop.index0 }}" class="text-truncate card-text task-content">{{ task.content }}</p>
                         </div>
                         <div class="card-footer" style="background-color:#ceeae3;">
                             {% if isDone %}

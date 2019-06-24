@@ -29,6 +29,7 @@ class UserRepository extends EntityRepository
     public function getUsers($page): Paginator
     {
         $query = $this->createQueryBuilder('u')
+            ->orderBy('u.id', 'DESC')
             ->getQuery()
         ;
 

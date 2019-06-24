@@ -24,11 +24,29 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 class TaskController extends Controller
 {
     /**
-     * @Route("/tasks", name="task_list")
+     * List tasks
+     * @access public
+     * @Route("/tasks/{status}", name="tdl_task_list", requirements={"status"="current|finish"})
+     * 
+     * @return Response
      */
-    public function listAction()
+    public function listAction($status): Response
     {
-        return $this->render('task/list.html.twig', ['tasks' => $this->getDoctrine()->getRepository('AppBundle:Task')->findAll()]);
+        $user = $this->getUser();
+
+        $isDone = ($status == 'current') ? false : true;
+
+        $tasks = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository(Task::class)
+            ->getTasks(1, $user->getId(), $isDone)
+        ;
+
+        return $this->render(
+            'task/list.html.twig',
+            ['tasks' => $tasks, 'isDone' => $isDone]
+        );
     }
 
     /**
@@ -59,7 +77,7 @@ class TaskController extends Controller
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
             
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('tdl_task_list', ['status' => 'current']);
         }
 
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
@@ -92,10 +110,16 @@ class TaskController extends Controller
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
 
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute(
+                'tdl_task_list',
+                ['status' => ($task->isDone()) ? 'finish' : 'current']
+            );
         }
 
-        return $this->render('task/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render(
+            'task/edit.html.twig',
+            ['form' => $form->createView(), 'task' => $task]
+        );
     }
 
     /**
@@ -116,12 +140,18 @@ class TaskController extends Controller
 
         try {
             $this->getDoctrine()->getManager()->flush();
-            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+            $this->addFlash(
+                'success',
+                sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle())
+            );
         } catch(ORMException $exception) {
             $this->addFlash('error', 'Une erreur est survenue.');
         }
 
-        return $this->redirectToRoute('task_list');
+        return $this->redirectToRoute(
+            'tdl_task_list',
+            ['status' => ($task->isDone()) ? 'current' : 'finish']
+        );
     }
 
     /**
@@ -148,6 +178,9 @@ class TaskController extends Controller
             $this->addFlash('error', 'Une erreur est survenue.');
         }
 
-        return $this->redirectToRoute('task_list');
+        return $this->redirectToRoute(
+            'tdl_task_list',
+            ['status' => ($task->isDone()) ? 'finish' : 'current']
+        );
     }
 }

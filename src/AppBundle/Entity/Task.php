@@ -21,6 +21,11 @@ class Task
 {
     /**
      * @var int
+     */
+    const TASK_PER_PAGE = 10;
+    
+    /**
+     * @var int
      * @access private
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id

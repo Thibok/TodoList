@@ -217,7 +217,7 @@ class TaskControllerTest extends WebTestCase
      *
      * @return array
      */
-    public function UrlActionValues()
+    public function UrlActionValues(): array
     {
         return [
             [
@@ -298,6 +298,46 @@ class TaskControllerTest extends WebTestCase
         $response = $this->client->getResponse();
 
         $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * Test listAction with "current" url param
+     * @access public
+     *
+     * @return void
+     */
+    public function testListCurrentTasks(): void
+    {
+        $this->logIn('main');
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $nbTasks = $crawler->filter('.card')->count();
+        $firstTaskName = $crawler->filter('.task-link')->eq(0)->text();
+        $firstTaskContent = $crawler->filter('.task-content')->eq(0)->text();
+
+        $this->assertEquals(10, $nbTasks);
+        $this->assertSame('My first task', $firstTaskName);
+        $this->assertSame('A good task', $firstTaskContent);
+    }
+
+    /**
+     * Test listAction with "finish" url param
+     * @access public
+     *
+     * @return void
+     */
+    public function testListFinishTasks(): void
+    {
+        $this->logIn('main');
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $nbTasks = $crawler->filter('.card')->count();
+        $firstTaskName = $crawler->filter('.task-link')->eq(0)->text();
+        $firstTaskContent = $crawler->filter('.task-content')->eq(0)->text();
+
+        $this->assertEquals(10, $nbTasks);
+        $this->assertSame('Im a finish task', $firstTaskName);
+        $this->assertSame('Im a finish task', $firstTaskContent);
     }
 
     /**

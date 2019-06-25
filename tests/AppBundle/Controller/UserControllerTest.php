@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * UserController Test
+ * UserController tests
  */
 
 namespace Tests\AppBundle\Controller;
@@ -72,6 +72,24 @@ class UserControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access add user page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToAddUser(): void
+    {
+        $this->logIn('admin');
+
+        $crawler = $this->client->request('GET', '/');
+
+        $link = $crawler->selectLink('Créer un utilisateur')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Créer un utilisateur', $crawler->filter('title')->text());
+    }
+
+    /**
      * Test editAction method of UserController
      * @access public
      *
@@ -114,6 +132,24 @@ class UserControllerTest extends WebTestCase
         $this->assertSame('newUpdatedEmail@yahoo.com', $email);
         $this->assertSame('ROLE_ADMIN', $role);
         $this->assertEquals($userBeforeEdit->getId(), $userEdited->getId());
+    }
+
+    /**
+     * Test path to access edit user page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToEditUser(): void
+    {
+        $this->logIn('admin');
+
+        $crawler = $this->client->request('GET', '/users');
+
+        $link = $crawler->filter('.edit-user-link')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Modifier un utilisateur', $crawler->filter('title')->text());
     }
 
     /**
@@ -263,6 +299,33 @@ class UserControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access list users page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToListUsers(): void
+    {
+        $this->logIn('admin');
+
+        $crawler = $this->client->request('GET', '/users/create');
+
+        $link = $crawler->selectLink('Retour à la liste des utilisateurs')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Liste des utilisateurs', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/users');
+        $linkEdit = $crawler->filter('.edit-user-link')->eq(0)->link();
+        $crawler = $this->client->click($linkEdit);
+
+        $linkUsers = $crawler->selectLink('Retour à la liste des utilisateurs')->link();
+        $crawler = $this->client->click($linkUsers);
+
+        $this->assertSame(' To Do List - Liste des utilisateurs', $crawler->filter('title')->text());
+    }
+
+    /**
      * Log user
      * @access private
      * @param string $userRole
@@ -278,11 +341,11 @@ class UserControllerTest extends WebTestCase
         $manager = $this->client->getContainer()->get('doctrine')->getManager();
 
         if ($userRole == 'admin') {
-            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('SuperAdmin'); 
+            $user = $manager->getRepository(User::class)->findOneByUsername('SuperAdmin'); 
         }
 
         if ($userRole == 'secondary') {
-            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('JeanTest'); 
+            $user = $manager->getRepository(User::class)->findOneByUsername('JeanTest'); 
         }
 
         $token = new UsernamePasswordToken($user, $user->getPassword(), $firewallName, $user->getRoles());

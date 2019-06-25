@@ -47,6 +47,11 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskForDelete->setContent('Delete');
         $taskForDelete->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
+        $taskForTestUp = new Task;
+        $taskForTestUp->setTitle('Task up');
+        $taskForTestUp->setContent('Task up');
+        $taskForTestUp->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
+
         $taskCurrent1 = new Task;
         $taskCurrent1->setTitle('Im a current task');
         $taskCurrent1->setContent('Im a current task');
@@ -146,8 +151,8 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskFinish8->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $taskFinish9 = new Task;
-        $taskFinish9->setTitle('Im a finish task');
-        $taskFinish9->setContent('Im a finish task');
+        $taskFinish9->setTitle('Path edit task');
+        $taskFinish9->setContent('Path edit task');
         $taskFinish9->toggle(true);
         $taskFinish9->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
@@ -161,6 +166,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($taskBadValues);
         $manager->persist($taskForToggle);
         $manager->persist($taskForDelete);
+        $manager->persist($taskForTestUp);
         $manager->persist($taskCurrent1);
         $manager->persist($taskCurrent2);
         $manager->persist($taskCurrent3);

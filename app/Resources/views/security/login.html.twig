@@ -5,13 +5,25 @@
         <div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
-    <form action="{{ path('login_check') }}" method="post">
-        <label for="username">Nom d'utilisateur :</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+<div class="row flex-column mx-0">
+    <div class="col-lg-5 mx-auto">
+        <form action="{{ path('login_check') }}" method="post">
+            <div class="form-group">
+                <label class="control-label" for="username">Nom d'utilisateur :</label>
+                <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}" />
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="password">Mot de passe :</label>
+                <input class="form-control" type="password" id="password" name="_password" />
+            </div>
+            <div id="submitBtnContainer" class="d-flex flex-column align-items-center">
+                <button class="btn btn-success" type="submit">Se connecter</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="_password" />
-
-        <button class="btn btn-success" type="submit">Se connecter</button>
-    </form>
+{% block javascripts %}
+    {{ parent() }}
 {% endblock %}

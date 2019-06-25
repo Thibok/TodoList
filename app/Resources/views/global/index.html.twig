@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% block title %} {{ parent() }} Accueil{% endblock %}
+    {% block header_title %}
+        <h1 class="pb-1" id="homepageTitle">Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !</h1>
+    {% endblock %}
+{% block body %}
+
+    <div id="controlsContainerHome" class="row d-flex ml-0 mt-2 w-100">
+        <a href="{{ path('tdl_task_create') }}" class="btn btn-success mb-1 homepage-btn">Créer une tâche</a>
+        <a href="{{ path('tdl_task_list', {'status' : 'current'}) }}" class="btn btn-info mb-1 homepage-btn">Consulter les tâches en cours</a>
+        <a href="{{ path('tdl_task_list', {'status' : 'finish'}) }}" class="btn btn-secondary mb-1 homepage-btn">Consulter les tâches terminées</a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

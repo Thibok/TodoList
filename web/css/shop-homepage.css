@@ -17,13 +17,53 @@ body {
     padding-top: 70px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 
+h1 {
+    font-size: 2.2em;
+}
+
+ul {
+    list-style-type: none;
+}
+
 #wrap {
     min-height: 100%;
     overflow: auto;
 }
 
+#main {
+    overflow: auto;
+    padding-top: 10px;
+    padding-bottom: 35px;
+}
+
+#navContainer {
+    background-color: #e3f2fd;
+}
+
+#footerContainer {
+    position: relative;
+    height: 30px;
+    margin-top: -30px;
+    clear: both;
+}
+
 .slide-image {
     width: 100%;
+}
+
+#homepageHeaderContainer {
+    position: relative;
+}
+
+#homepageTitle {
+    position: absolute;
+    font-family: fantasy;
+    bottom: -8px;
+    margin-right: 15px;
+    padding-left: 10px;
+    color: white;
+    font-size: 1.8em;
+    background-color: rgba(108, 117, 125, 0.5);
 }
 
 .carousel-holder {
@@ -67,31 +107,6 @@ body {
     border: 1px solid grey;
 }
 
-ul {
-    list-style-type: none;
-}
-
-#navContainer {
-    background-color: #e3f2fd;
-}
-
-#footerContainer {
-    position: relative;
-    height: 30px;
-    margin-top: -30px;
-    clear: both;
-}
-
-#main {
-    overflow: auto;
-    padding-top: 10px;
-    padding-bottom: 35px;
-}
-
-h1 {
-    font-size: 2.2em;
-}
-
 .task-title {
     font-size: 1em;
 }
@@ -104,10 +119,12 @@ h1 {
     border: 1px solid #d3d3d3;
 }
 
-@media screen and (max-width: 348px) {
-    #userListTitle {
-        text-align: center;
-    }
+#controlsContainerHome {
+    justify-content: space-between;
+}
+
+.card-footer {
+    background-color:#ceeae3;
 }
 
 @media screen and (max-width: 767px) {
@@ -121,6 +138,31 @@ h1 {
     }
 
     #noTasks {
+        text-align: center;
+    }
+
+    #homepageTitle {
+        font-size: 1.3em;
+    }
+
+    #controlsContainerHome {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .homepage-btn {
+        width: 250px;
+    }
+}
+
+@media screen and (max-width: 353px) {
+    #homepageTitle {
+        font-size: 0.85em;
+    }
+}
+
+@media screen and (max-width: 348px) {
+    #userListTitle {
         text-align: center;
     }
 }

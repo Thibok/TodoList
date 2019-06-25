@@ -23,12 +23,12 @@
                             </div>
                             <div class="card-footer">
                                 {% if isDone %}
-                                    <a title="Non terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/current.png') }}" alt="Marquer comme non terminée"></a>
+                                    <a class="toggle-task-link" title="Non terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/current.png') }}" alt="Marquer comme non terminée"></a>
                                 {% else %}
-                                    <a title="Terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/terminate.png') }}" alt="Marquer comme terminée"></a>
+                                    <a class="toggle-task-link" title="Terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/terminate.png') }}" alt="Marquer comme terminée"></a>
                                 {% endif %}
-                                <a title="Editer" href="{{ path('tdl_task_edit', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/edit.png') }}" alt="Editer une tache"></a>
-                                <a title="Supprimer" id="task-delete-link-{{ index }}" class="task-delete" href="{{ path('tdl_task_delete', {'id' : task.id}) }}"><img src="{{ asset('img/delete.png') }}" alt="Supprimer une tache"></a>
+                                <a class="edit-task-link" title="Editer" href="{{ path('tdl_task_edit', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/edit.png') }}" alt="Editer une tache"></a>
+                                <a class="delete-task-link" title="Supprimer" id="task-delete-link-{{ index }}" class="task-delete" href="{{ path('tdl_task_delete', {'id' : task.id}) }}"><img src="{{ asset('img/delete.png') }}" alt="Supprimer une tache"></a>
                             </div>
                         </div>
                     </div>

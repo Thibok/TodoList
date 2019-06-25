@@ -5,8 +5,8 @@ $(function() {
         let taskTitle = $("#task-title-link-" + id).text();
         let taskContent = $("#task-content-" + id).text();
 
-        let modalTitle = $('<h4 class="text-primary text-center">' + taskTitle + '</h4>');
-        let modalContent = $('<p>' + taskContent + '</p>');
+        let modalTitle = $("<h4 class='text-primary text-center'>" + taskTitle + "</h4>");
+        let modalContent = $("<p>" + taskContent + "</p>");
 
         viewTaskModal.setTitle(modalTitle);
         viewTaskModal.setContent(modalContent);

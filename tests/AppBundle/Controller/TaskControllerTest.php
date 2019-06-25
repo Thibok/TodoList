@@ -2,12 +2,13 @@
 declare(strict_types=1);
 
 /**
- * TaskController Test
+ * TaskController tests
  */
 
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Task;
+use AppBundle\Entity\User;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -65,6 +66,38 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access add task page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToAddTask(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/');
+
+        $link = $crawler->selectLink('Créer une tâche')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Créer une tâche', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $link = $crawler->selectLink('Créer une tâche')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Créer une tâche', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $link = $crawler->selectLink('Créer une tâche')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Créer une tâche', $crawler->filter('title')->text());
+    }
+
+    /**
      * Test editAction method of TaskController
      * @access public
      *
@@ -98,6 +131,31 @@ class TaskControllerTest extends WebTestCase
         $this->assertSame('A simple task', $taskTitle);
         $this->assertSame('Simple content', $taskContent);
         $this->assertEquals($taskBeforeEdit->getId(), $taskEdited->getId());
+    }
+
+    /**
+     * Test path to access edit task page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToEditTask(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $link = $crawler->filter('.edit-task-link')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Editer une tâche', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $link = $crawler->filter('.edit-task-link')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Editer une tâche', $crawler->filter('title')->text());
     }
 
     /**
@@ -258,6 +316,35 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access delete task
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToDeleteTask(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $link = $crawler->filter('.delete-task-link')->eq(3)->link();
+        $this->client->click($link);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $link = $crawler->filter('.delete-task-link')->eq(3)->link();
+        $this->client->click($link);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
+    }
+
+    /**
      * Test toggle Task
      * @access public
      *
@@ -279,6 +366,35 @@ class TaskControllerTest extends WebTestCase
         $toggleTask = $manager->getRepository(Task::class)->findOneByTitle('Toggle me');
 
         $this->assertTrue($toggleTask->isDone());
+    }
+
+    /**
+     * Test path to access toggle task
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToToggleTask(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $link = $crawler->filter('.toggle-task-link')->eq(3)->link();
+        $this->client->click($link);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $link = $crawler->filter('.toggle-task-link')->eq(3)->link();
+        $this->client->click($link);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
     }
 
     /**
@@ -321,6 +437,47 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access current tasks page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToCurrentTasks(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/');
+
+        $link = $crawler->selectLink('Consulter les tâches en cours')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+
+        $link = $crawler->selectLink('Voir les tâches en cours')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+        $linkEdit = $crawler->filter('.edit-task-link')->eq(0)->link();
+        $crawler = $this->client->click($linkEdit);
+
+        $linkCurrentTasks = $crawler->selectLink('Retour à la liste des tâches')->link();
+        $crawler = $this->client->click($linkCurrentTasks);
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/create');
+
+        $link = $crawler->selectLink('Retour à la liste des tâches')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
+    }
+
+    /**
      * Test listAction with "finish" url param
      * @access public
      *
@@ -341,6 +498,40 @@ class TaskControllerTest extends WebTestCase
     }
 
     /**
+     * Test path to access finish tasks page
+     * @access public
+     *
+     * @return void
+     */
+    public function testPathToFinishTasks(): void
+    {
+        $this->logIn('main');
+
+        $crawler = $this->client->request('GET', '/');
+
+        $link = $crawler->selectLink('Consulter les tâches terminées')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/current');
+
+        $link = $crawler->selectLink('Voir les tâches terminées')->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
+
+        $crawler = $this->client->request('GET', '/tasks/finish');
+        $linkEdit = $crawler->filter('.edit-task-link')->eq(0)->link();
+        $crawler = $this->client->click($linkEdit);
+
+        $linkCurrentTasks = $crawler->selectLink('Retour à la liste des tâches')->link();
+        $crawler = $this->client->click($linkCurrentTasks);
+
+        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
+    }
+
+    /**
      * Log user
      * @access private
      * @param string $userRole
@@ -356,11 +547,11 @@ class TaskControllerTest extends WebTestCase
         $manager = $this->client->getContainer()->get('doctrine')->getManager();
 
         if ($userRole == 'main') {
-            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('BryanTest'); 
+            $user = $manager->getRepository(User::class)->findOneByUsername('BryanTest'); 
         }
 
         if ($userRole == 'secondary') {
-            $user = $manager->getRepository('AppBundle:User')->findOneByUsername('JeanTest'); 
+            $user = $manager->getRepository(User::class)->findOneByUsername('JeanTest'); 
         }
 
         $token = new UsernamePasswordToken($user, $user->getPassword(), $firewallName, $user->getRoles());

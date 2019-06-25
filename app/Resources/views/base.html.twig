@@ -27,7 +27,7 @@
         <nav id="navContainer" class="navbar navbar-expand-sm navbar-light fixed-top">
             <div class="container">
                 <div>
-                    <a href="#">To Do List app</a>
+                    <a class="text-decoration-none" href="{{ path('tdl_global_homepage') }}">To Do List app</a>
                     <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('homepage') }}">Accueil</a>
+                            <a class="nav-link" href="{{ path('tdl_global_homepage') }}">Accueil</a>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('tdl_user_create') }}">Créer un utilisateur</a>
@@ -58,7 +58,7 @@
         <!-- Page Content -->
         <div id="wrap" class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div id="homepageHeaderContainer" class="col-md-12">
                     {% for flash_message in app.flashes('success') %}
                         <div class="alert alert-success" role="alert">
                             <strong>Superbe !</strong> {{ flash_message }}

@@ -21,7 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(fields="email", message="Cette email est déjà utilisée")
  * @UniqueEntity(fields="username", message="Ce nom d'utilisateur est déjà utilisé")
  */
-class User implements UserInterface, EquatableInterface
+class User implements UserInterface, EquatableInterface, \Serializable
 {
     /**
      * @var int
@@ -239,6 +239,30 @@ class User implements UserInterface, EquatableInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function serialize(): string
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password,
+        ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unserialize($serialized): void
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+        ) = unserialize($serialized);
     }
 
     /**

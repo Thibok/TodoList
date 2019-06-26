@@ -35,19 +35,23 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('tdl_global_homepage') }}">Accueil</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('tdl_user_create') }}">Créer un utilisateur</a>
-                        </li>
                         {% if is_granted('IS_AUTHENTICATED_FULLY')%}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('logout') }}">Déconnexion</a>
+                                <a class="nav-link" href="{{ path('tdl_global_homepage') }}">Accueil</a>
+                            </li>
+                        {% endif %}  
+                        {% if is_granted('ROLE_ADMIN')%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_user_create') }}">Créer un utilisateur</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_logout') }}">Déconnexion</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('login') }}">Login</a>
+                                <a class="nav-link" href="{{ path('tdl_login') }}">Login</a>
                             </li>
                         {% endif %}
                     </ul>

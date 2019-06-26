@@ -28,9 +28,6 @@ services:
     AppBundle\Validator\CaptchaValidator:
         arguments:
             $captchaSecretKey: '%captcha_secret_key%'
-
-    AppBundle\ParamChecker\CaptchaChecker:
-        arguments:
             $env: '%kernel.environment%'
     
     AppBundle\EventListener\UserListener:

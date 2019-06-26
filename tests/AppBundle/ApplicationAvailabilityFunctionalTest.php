@@ -101,8 +101,10 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
         $this->setUp();
 
         $manager = $this->client->getContainer()->get('doctrine')->getManager();
-
         $user = $manager->getRepository(User::class)->findOneByUsername('JeanTest');
+
+        $this->tearDown();
+
         $editUrl = '/users/' .$user->getId(). '/edit';
 
         return array(
@@ -110,6 +112,62 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
             array('/users/create'),
             array($editUrl),
         );
+    }
+
+    /**
+     * Test no auth user can't access pages under security
+     * @access public
+     * @param string $url
+     * @dataProvider adminUrlProvider
+     * 
+     * @return void
+     */
+    public function testNoAuthUserAccess($url): void
+    {
+        $this->client->request('GET', $url);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertSame(' To Do List - Login', $crawler->filter('title')->text());
+    }
+
+    /**
+     * Url values for testNoAuthUserAccess
+     * @access public
+     *
+     * @return array
+     */
+    public function authUrlProvider(): array
+    {
+        
+        return [
+            [
+                '/'
+            ],
+            [
+                '/tasks/create'
+            ],
+            [
+                '/users/create'
+            ]
+        ];
+    }
+
+    /**
+     * Test auth user can't access page for admin
+     * @access public
+     * @param string $url
+     * 
+     * @return void
+     */
+    public function testAuthUserCantAccessPageForAdmin(): void
+    {
+        $this->logIn('main');
+
+        $this->client->request('GET', '/users/create');
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(403, $response->getStatusCode());
     }
 
     /**

@@ -9,7 +9,6 @@ namespace AppBundle\ParamChecker;
 
 use AppBundle\Validator\Captcha;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -22,12 +21,6 @@ class CaptchaChecker
      * @access private
      */
     private $validator;
-
-    /**
-     * @var string
-     * @access private
-     */
-    private $env;
     
     /**
      * Constructor
@@ -37,10 +30,9 @@ class CaptchaChecker
      * 
      * @return void
      */
-    public function __construct(ValidatorInterface $validator, $env)
+    public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
-        $this->env = $env;
     }
 
     /**
@@ -54,15 +46,13 @@ class CaptchaChecker
         $captcha = $request->get('g-recaptcha-response');
         $constraint = new Captcha;
 
-        if ($this->env != 'test') {
-            $errors = $this->validator->validate($captcha, $constraint);
+        $errors = $this->validator->validate($captcha, $constraint);
 
-            if (count($errors) != 0) {
-                $request->getSession()->getFlashBag()->add('error', $constraint->message);
-                return false;
-            }
+        if (count($errors) != 0) {
+            $request->getSession()->getFlashBag()->add('error', $constraint->message);
+            return false;
         }
-
+        
         return true;
     }
 }

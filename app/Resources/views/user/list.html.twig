@@ -38,10 +38,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <button id="loadMoreUsers" class="btn btn-primary mb-4 mt-2">Voir plus</button>
         </div>
     {% endif %}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('js/list_user.js') }}" async defer></script>
 {% endblock %}

@@ -44,7 +44,7 @@ $(function() {
         viewTaskModal.open();
     });
 
-    $(".task-delete").click(function (e) {
+    $(".delete-task-link").click(function (e) {
         e.preventDefault();
 
         let link = $(this).attr("href");

@@ -98,7 +98,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskCurrent9->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $taskCurrent10 = new Task;
-        $taskCurrent10->setTitle('Im a current task');
+        $taskCurrent10->setTitle('Test ajax');
         $taskCurrent10->setContent('Im a current task');
         $taskCurrent10->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
@@ -157,7 +157,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskFinish9->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $taskFinish10 = new Task;
-        $taskFinish10->setTitle('Im a finish task');
+        $taskFinish10->setTitle('Test finish ajax');
         $taskFinish10->setContent('Im a finish task');
         $taskFinish10->toggle(true);
         $taskFinish10->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));

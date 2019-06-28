@@ -6,6 +6,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -58,6 +59,70 @@ class ApiControllerTest extends WebTestCase
         $this->assertNotEmpty($firstUser['username']);
         $this->assertNotEmpty($firstUser['email']);
         $this->assertNotEmpty($firstUser['role']);
+    }
+
+    /**
+     * Test getTasksAction method of ApiController (Ajax) with current param
+     * @access public
+     *
+     * @return void
+     */
+    public function testGetCurrentTasks(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Test ajax');
+
+        $this->logIn('main');
+
+        $this->client->request(
+            'GET',
+            '/api/tasks/current/1',
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $datas = json_decode($this->client->getResponse()->getContent(), true);
+        
+        $firstTask = $datas[0];
+
+        $this->assertEquals(10, count($datas));
+
+        $this->assertEquals($task->getId(), $firstTask['id']);
+        $this->assertNotEmpty($firstTask['title']);
+        $this->assertNotEmpty($firstTask['content']);
+    }
+
+    /**
+     * Test getTasksAction method of ApiController (Ajax) with finish param
+     * @access public
+     *
+     * @return void
+     */
+    public function testGetFinishTasks(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Test finish ajax');
+
+        $this->logIn('main');
+
+        $this->client->request(
+            'GET',
+            '/api/tasks/finish/1',
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $datas = json_decode($this->client->getResponse()->getContent(), true);
+        
+        $firstTask = $datas[0];
+
+        $this->assertEquals(10, count($datas));
+
+        $this->assertEquals($task->getId(), $firstTask['id']);
+        $this->assertNotEmpty($firstTask['title']);
+        $this->assertNotEmpty($firstTask['content']);
     }
 
     /**
@@ -115,6 +180,9 @@ class ApiControllerTest extends WebTestCase
         return [
             [
                 '/api/users/1',
+            ],
+            [
+                '/api/tasks/current/1'
             ]
         ];
     }
@@ -190,6 +258,9 @@ class ApiControllerTest extends WebTestCase
         return [
             [
                 '/api/users/test'
+            ],
+            [
+                '/api/tasks/current/test'
             ]
         ];
     }
@@ -208,6 +279,10 @@ class ApiControllerTest extends WebTestCase
         $firewallName = 'main';
         $firewallContext = 'main';
         $manager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        if ($userRole == 'main') {
+            $user = $manager->getRepository(User::class)->findOneByUsername('BryanTest'); 
+        }
 
         if ($userRole == 'admin') {
             $user = $manager->getRepository(User::class)->findOneByUsername('SuperAdmin'); 

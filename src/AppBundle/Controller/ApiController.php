@@ -7,13 +7,12 @@ declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * ApiController
@@ -23,7 +22,6 @@ class ApiController extends Controller
     /**
      * Get users with Ajax
      * @access public
-     * @param Request $request
      * @param int $page
      * @Route(
      *     "/api/users/{page}",
@@ -35,7 +33,7 @@ class ApiController extends Controller
      * 
      * @return JsonResponse
      */
-    public function getUsersAction(Request $request, $page): JsonResponse
+    public function getUsersAction($page): JsonResponse
     {
         $users = $this
             ->getDoctrine()
@@ -51,6 +49,48 @@ class ApiController extends Controller
                 'username' => $user->getUsername(),
                 'email' => $user->getEmail(),
                 'role' => $user->getRole()
+            ];
+
+            $datas[] = $data;
+        }
+
+        return new JsonResponse($datas);
+    }
+
+    /**
+     * Get current/finish tasks with Ajax
+     * @access public
+     * @param int $page
+     * @param string $status
+     * @Route(
+     *     "/api/tasks/{status}/{page}",
+     *     name="tdl_api_tasks",
+     *     requirements={"status"="current|finish", "page"="\d+"},
+     *     methods={"GET"},
+     *     condition="request.isXmlHttpRequest()"
+     * )
+     * 
+     * @return JsonResponse
+     */
+    public function getTasksAction($page, $status): JsonResponse
+    {
+        $user = $this->getUser();
+
+        $isDone = ($status == 'current') ? false : true;
+
+        $tasks = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository(Task::class)
+            ->getTasks($page, $user->getId(), $isDone);
+
+        $datas = [];
+
+        foreach ($tasks as $task) {       
+            $data = [
+                'id' => $task->getId(),
+                'title' => $task->getTitle(),
+                'content' => $task->getContent(),
             ];
 
             $datas[] = $data;

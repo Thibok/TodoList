@@ -140,10 +140,14 @@ class TaskController extends Controller
 
         try {
             $this->getDoctrine()->getManager()->flush();
-            $this->addFlash(
-                'success',
-                sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle())
-            );
+
+            $message = ($task->isDone())
+                ? 'La tâche %s a bien été marquée comme faite.'
+                : 'La tâche %s a bien été marquée comme non faite.'
+            ;
+
+            $this->addFlash('success', sprintf($message, $task->getTitle())); 
+
         } catch(ORMException $exception) {
             $this->addFlash('error', 'Une erreur est survenue.');
         }

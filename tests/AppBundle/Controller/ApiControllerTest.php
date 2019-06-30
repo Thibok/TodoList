@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * ApiController Test
@@ -315,7 +316,7 @@ class ApiControllerTest extends WebTestCase
             ],
             [
                 'DELETE',
-                '/api/tasks/1'
+                '/api/tasks/test'
             ]
         ];
     }

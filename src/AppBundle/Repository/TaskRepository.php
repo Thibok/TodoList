@@ -46,4 +46,27 @@ class TaskRepository extends EntityRepository
 
         return new Paginator($query, true);
     }
+
+    /**
+     * Get paginate unknow tasks
+     * @access public
+     * @param int $page
+     * 
+     * @return Paginator
+     */
+    public function getUnknowTasks($page): Paginator
+    {
+        $query = $this->createQueryBuilder('t')
+            ->where('t.user IS NULL')
+            ->orderBy('t.id', 'DESC')
+            ->getQuery()
+        ;
+
+        $query
+            ->setFirstResult(($page - 1) * Task::TASK_PER_PAGE)
+            ->setMaxResults(Task::TASK_PER_PAGE)
+        ;
+
+        return new Paginator($query, true);
+    }
 }

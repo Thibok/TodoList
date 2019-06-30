@@ -157,34 +157,4 @@ class TaskController extends Controller
             ['status' => ($task->isDone()) ? 'current' : 'finish']
         );
     }
-
-    /**
-     * Delete Task
-     * @access public
-     * @param Task $task
-     * @Route("/tasks/{id}/delete", name="tdl_task_delete", requirements={"id"="\d+"})
-     * 
-     * @return RedirectResponse
-     */
-    public function deleteAction(Task $task): RedirectResponse
-    {
-        if (!$this->getUser()->isEqualTo($task->getUser())) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $manager = $this->getDoctrine()->getManager();
-        $manager->remove($task);
-
-        try {
-            $manager->flush();
-            $this->addFlash('success', 'La tâche a bien été supprimée.');
-        } catch(ORMException $exception) {
-            $this->addFlash('error', 'Une erreur est survenue.');
-        }
-
-        return $this->redirectToRoute(
-            'tdl_task_list',
-            ['status' => ($task->isDone()) ? 'finish' : 'current']
-        );
-    }
 }

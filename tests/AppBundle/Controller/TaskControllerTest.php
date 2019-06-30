@@ -284,64 +284,7 @@ class TaskControllerTest extends WebTestCase
             [
                 'toggle'
             ],
-            [
-                'delete'
-            ]
         ];
-    }
-
-    /**
-     * Test delete Task
-     * @access public
-     *
-     * @return void
-     */
-    public function testDeleteTask(): void
-    {
-        $manager = $this->client->getContainer()->get('doctrine')->getManager();
-        $task = $manager->getRepository(Task::class)->findOneByTitle('Delete me');
-        $url = '/tasks/' .$task->getId(). '/delete';
-
-        $this->logIn('main');
-
-        $this->client->request('GET', $url);
-        $crawler = $this->client->followRedirect();
-
-        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
-
-        $this->client->request('GET', $url);
-        $response = $this->client->getResponse();
-
-        $this->assertEquals(404, $response->getStatusCode());
-    }
-
-    /**
-     * Test path to access delete task
-     * @access public
-     *
-     * @return void
-     */
-    public function testPathToDeleteTask(): void
-    {
-        $this->logIn('main');
-
-        $crawler = $this->client->request('GET', '/tasks/finish');
-
-        $link = $crawler->filter('.delete-task-link')->eq(3)->link();
-        $this->client->click($link);
-        $crawler = $this->client->followRedirect();
-
-        $this->assertSame(' To Do List - Consulter les tâches terminées', $crawler->filter('title')->text());
-        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
-
-        $crawler = $this->client->request('GET', '/tasks/current');
-
-        $link = $crawler->filter('.delete-task-link')->eq(3)->link();
-        $this->client->click($link);
-        $crawler = $this->client->followRedirect();
-
-        $this->assertSame(' To Do List - Consulter les tâches en cours', $crawler->filter('title')->text());
-        $this->assertEquals(1, $crawler->filter('div.alert-success')->count());
     }
 
     /**

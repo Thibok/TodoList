@@ -162,6 +162,46 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskFinish10->toggle(true);
         $taskFinish10->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
+        $unknowTask1 = new Task;
+        $unknowTask1->setTitle('Test unknow task');
+        $unknowTask1->setContent('Test unknow task');
+
+        $unknowTask2 = new Task;
+        $unknowTask2->setTitle('Test unknow task');
+        $unknowTask2->setContent('Test unknow task');
+
+        $unknowTask3 = new Task;
+        $unknowTask3->setTitle('Test unknow task');
+        $unknowTask3->setContent('Test unknow task');
+
+        $unknowTask4 = new Task;
+        $unknowTask4->setTitle('Test unknow task');
+        $unknowTask4->setContent('Test unknow task');
+
+        $unknowTask5 = new Task;
+        $unknowTask5->setTitle('Test unknow task');
+        $unknowTask5->setContent('Test unknow task');
+
+        $unknowTask6 = new Task;
+        $unknowTask6->setTitle('Test unknow task');
+        $unknowTask6->setContent('Test unknow task');
+
+        $unknowTask7 = new Task;
+        $unknowTask7->setTitle('Test unknow task');
+        $unknowTask7->setContent('Test unknow task');
+
+        $unknowTask8 = new Task;
+        $unknowTask8->setTitle('Test unknow task');
+        $unknowTask8->setContent('Test unknow task');
+
+        $unknowTask9 = new Task;
+        $unknowTask9->setTitle('Test unknow task');
+        $unknowTask9->setContent('Test unknow task');
+
+        $unknowTask10 = new Task;
+        $unknowTask10->setTitle('Test unknow task');
+        $unknowTask10->setContent('Test unknow task');
+
         $manager->persist($taskForUpdate);
         $manager->persist($taskBadValues);
         $manager->persist($taskForToggle);
@@ -187,6 +227,16 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($taskFinish8);
         $manager->persist($taskFinish9);
         $manager->persist($taskFinish10);
+        $manager->persist($unknowTask1);
+        $manager->persist($unknowTask2);
+        $manager->persist($unknowTask3);
+        $manager->persist($unknowTask4);
+        $manager->persist($unknowTask5);
+        $manager->persist($unknowTask6);
+        $manager->persist($unknowTask7);
+        $manager->persist($unknowTask8);
+        $manager->persist($unknowTask9);
+        $manager->persist($unknowTask10);
 
         $manager->flush();
     }

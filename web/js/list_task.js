@@ -8,10 +8,11 @@ $(function() {
     const apiTaskUrl = "/api/tasks/";
 
     var tasksLength = $(".task-container").length;
+    var unknowTaskLength = $(".unknow-task-container").length;
     var viewTaskModal = new jBox("Modal");
 
     function createAjaxLoader (id) {
-        let loadImg = $("<div id=" + id + " class='w-100 text-center'><img class='mb-2 mt-2' src='" + ajaxLoaderImgPath + "' alt='loader'/></div>");
+        let loadImg = $("<img id=" + id +" class='mb-2 mt-2' src='" + ajaxLoaderImgPath + "' alt='loader'/>");
         loadImg.css("width", "48px").css("height", "48px");
 
         return loadImg;
@@ -21,6 +22,29 @@ $(function() {
         let loadMore = $("<button id=" + id +" class='btn btn-primary mb-4 mt-2'>Voir plus</button>");
 
         return loadMore;
+    }
+
+    function confirmDelete (message) {
+        let flashContainer = $("<div class='alert alert-success' role='alert'></div>");
+        let flashStrongMsg = $("<strong>Superbe ! </strong>");
+        let flashMsg = $("<span></span>");
+        flashMsg.text(message)
+        
+        flashContainer.append(flashStrongMsg);
+        flashContainer.append(flashMsg);
+
+        flashContainer.hide();
+
+        $("#homepageHeaderContainer").prepend(flashContainer);
+    
+        $(".alert").each(function (index) {
+            var duration = 3000 * (index + 1);
+            $(this).show();
+
+            $(this).fadeOut(duration, function() {
+                $(this).remove();
+            });
+        });
     }
 
     function createTaskElement(id, title, content) {
@@ -121,6 +145,35 @@ $(function() {
         return taskContainer;
     }
 
+    function createUnknowTaskElement(id, title) {
+        let taskContainer = $("<div class='d-flex justify-content-around px-5 mb-1 unknow-task-container'>");
+
+        let taskLi = $("<li class='text-truncate w-100'></li>");
+        taskLi.text(title);  
+
+        let taskLiDeleteLink = $("<a class='delete-unknow-task-link' title='Supprimer'></a>");
+        taskLiDeleteLink.attr("href", apiTaskUrl + id);
+
+        taskLiDeleteLink.click(function (event) {
+            event.preventDefault();
+
+            let link = $(this).attr("href");
+
+            createDeleteUnknowTaskModal(link);
+            unknowTaskModal.open();
+        });
+
+        let taskLiDeleteImg = $("<img alt='Supprimer une tache'/>");
+        taskLiDeleteImg.attr("src", deleteIconTaskPath);
+
+        taskLiDeleteLink.append(taskLiDeleteImg);
+
+        taskContainer.append(taskLi);
+        taskContainer.append(taskLiDeleteLink);
+
+        return taskContainer;
+    }
+
     function createViewTaskModal(id) {
         let taskTitle = $("#task-title-link-" + id).text();
         let taskContent = $("#task-content-" + id).text();
@@ -132,15 +185,69 @@ $(function() {
         viewTaskModal.setContent(modalContent);
     }
 
+    function goToDeleteUnknowTask() {
+        let url = $("#unknowTaskToRemove").text();
+        $("#unknowTaskToRemove").text('');
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(response) {
+                $("a[href$='" + url + "']").parent().remove();
+                unknowTaskLength--;
+
+                confirmDelete("La tâche a bien été supprimée.");
+
+                if (unknowTaskLength === 0 && $("#loadMoreUnknowTasks").length === 0) {
+                    let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
+                    noTasks.text("Il n'y a aucune tâches inconnues");
+    
+                    $("#unknowTaskRow").append(noTasks);
+                    $("#unknowTasksContainer").remove();
+                }
+            },
+            error: function () {
+                console.log("Une erreur est survenue");
+            }
+        });
+    }
+
     function goToDeleteTask() {
         let url = $("#taskToRemove").text();
-        $(location).attr("href", url);
+        $("#taskToRemove").text('');
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(response) {
+                $("a[href$='" + url + "']").parent().parent().parent().remove();
+                tasksLength--;
+
+                confirmDelete("La tâche a bien été supprimée.");
+
+                if (tasksLength === 0 && $("#loadMoreTasks").length === 0) {
+                    let noTasks = $("<p class='ml-3 mt-2 w-100' id='noTasks'></p>");
+                    noTasks.text("Il n'y a aucune " + $("#taskTitleStatus").text().toLowerCase());
+    
+                    $("#taskRow").append(noTasks);
+                }
+            },
+            error: function () {
+                console.log("Une erreur est survenue");
+            }
+        });
     }
 
     var deleteTaskModal = new jBox("Confirm", {
         cancelButton: "Annuler",
         confirmButton: "Supprimer",
         confirm: goToDeleteTask,
+    });
+
+    var unknowTaskModal = new jBox("Confirm", {
+        cancelButton: "Annuler",
+        confirmButton: "Supprimer",
+        confirm: goToDeleteUnknowTask,
     });
 
     function createDeleteTaskModal(link) {
@@ -153,6 +260,18 @@ $(function() {
         modalContainer.append(modalContent);
 
         deleteTaskModal.setContent(modalContainer);
+    }
+
+    function createDeleteUnknowTaskModal(link) {
+        let taskToRemoveLink = $("<p id='unknowTaskToRemove'>" + link + "</p>").hide();
+        let modalContent = $("<p>Etes vous sur de vouloir supprimer cette tâche ?</p>");
+
+        let modalContainer = $("<div></div>");
+
+        modalContainer.append(taskToRemoveLink);
+        modalContainer.append(modalContent);
+
+        unknowTaskModal.setContent(modalContainer);
     }
 
     function loadMoreTasks (button, event) {
@@ -172,6 +291,13 @@ $(function() {
         button.replaceWith(createAjaxLoader("tasksLoader"));
     
         $.get(url, function (datas) {
+            if (datas.length === 0 && tasksLength === 0) {
+                let noTasks = $("<p class='ml-3 mt-2 w-100' id='noTasks'></p>");
+                noTasks.text("Il n'y a aucune " + $("#taskTitleStatus").text().toLowerCase());
+    
+                $("#taskRow").append(noTasks);
+            }
+
             if (datas.length === 0) {
                 $("#tasksLoader").remove();
                 return;
@@ -199,6 +325,51 @@ $(function() {
             console.log("Une erreur est survenue");
         });
     }
+    
+    function loadMoreUnknowTasks (button, event) {
+        event.preventDefault();
+
+        let page = Math.ceil(unknowTaskLength / taskPerPage) + 1;
+        let url = apiTaskUrl + "unknow/" + page;
+    
+        button.replaceWith(createAjaxLoader("unknowTasksLoader"));
+    
+        $.get(url, function (datas) {
+            if (datas.length === 0 && unknowTaskLength === 0) {
+                let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
+                noTasks.text("Il n'y a aucune tâches inconnues");
+    
+                $("#unknowTaskRow").append(noTasks);
+                $("#unknowTasksContainer").remove();
+            }
+
+            if (datas.length === 0) {
+                $("#unknowTasksLoader").remove();
+                return;
+            }
+
+            $(datas).each(function () {
+                let unknowTask = createUnknowTaskElement(this["id"], this["title"]);
+                unknowTaskLength++;
+                $("#unknowTasksContainer").append(unknowTask);
+            });
+
+            if (datas.length < taskPerPage) {
+                $("#unknowTasksLoader").remove();
+                return;
+            }
+
+            let loadMoreButton = createLoadMoreButton("loadMoreUnknowTasks");
+            loadMoreButton.click(function (e) {
+                loadMoreUnknowTasks($(this), e);
+            });
+    
+            $("#unknowTasksLoader").replaceWith(loadMoreButton);
+        }).fail(function () {
+            $("#unknowTasksLoader").remove();
+            console.log("Une erreur est survenue");
+        });
+    }
 
     $(".task-link").click(function (event) {
         event.preventDefault();
@@ -222,7 +393,11 @@ $(function() {
         loadMoreTasks($(this), event);
     });
 
-    if ($(".task-container").length === 0) {
-        $("#loadMoreTasks").remove();
+    $("#loadMoreUnknowTasks").click(function (event) {
+        loadMoreUnknowTasks($(this), event);
+    });
+
+    if ($(".task-container").length < taskPerPage) {
+        $("#loadMoreTasksContainer").remove();
     }
 });

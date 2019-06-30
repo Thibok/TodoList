@@ -163,15 +163,15 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskFinish10->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $unknowTask1 = new Task;
-        $unknowTask1->setTitle('Test unknow task');
+        $unknowTask1->setTitle('Test unknow task ajax');
         $unknowTask1->setContent('Test unknow task');
 
         $unknowTask2 = new Task;
-        $unknowTask2->setTitle('Test unknow task');
+        $unknowTask2->setTitle('Delete me ajax');
         $unknowTask2->setContent('Test unknow task');
 
         $unknowTask3 = new Task;
-        $unknowTask3->setTitle('Test unknow task');
+        $unknowTask3->setTitle('Bad user role');
         $unknowTask3->setContent('Test unknow task');
 
         $unknowTask4 = new Task;
@@ -201,6 +201,10 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $unknowTask10 = new Task;
         $unknowTask10->setTitle('Test unknow task');
         $unknowTask10->setContent('Test unknow task');
+
+        $unknowTask11 = new Task;
+        $unknowTask11->setTitle('Test unknow task');
+        $unknowTask11->setContent('Test unknow task');
 
         $manager->persist($taskForUpdate);
         $manager->persist($taskBadValues);
@@ -237,6 +241,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($unknowTask8);
         $manager->persist($unknowTask9);
         $manager->persist($unknowTask10);
+        $manager->persist($unknowTask11);
 
         $manager->flush();
     }

@@ -12,14 +12,14 @@ $(function() {
     var viewTaskModal = new jBox("Modal");
 
     function createAjaxLoader (id) {
-        let loadImg = $("<img id=" + id +" class='mb-2 mt-2' src='" + ajaxLoaderImgPath + "' alt='loader'/>");
+        let loadImg = $("<img id=" + id +" class='mb-2 mt-3' src='" + ajaxLoaderImgPath + "' alt='loader'/>");
         loadImg.css("width", "48px").css("height", "48px");
 
         return loadImg;
     }
 
     function createLoadMoreButton (id) {
-        let loadMore = $("<button id=" + id +" class='btn btn-primary mb-4 mt-2'>Voir plus</button>");
+        let loadMore = $("<button id=" + id +" class='btn btn-primary mb-4 mt-3'>Voir plus</button>");
 
         return loadMore;
     }

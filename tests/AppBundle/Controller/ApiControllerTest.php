@@ -359,6 +359,72 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
+    /**
+     * Test delete unknow task
+     * @access public
+     *
+     * @return void
+     */
+    public function testDeleteUnknowTask(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Delete me ajax');
+        $url = '/api/tasks/' .$task->getId();
+
+        $this->logIn('admin');
+
+        $this->client->request(
+            'DELETE',
+            $url,
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(204, $response->getStatusCode());
+
+        $this->client->request(
+            'DELETE',
+            $url,
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * Test user without role admin can't delete unknow task
+     * @access public
+     *
+     * @return void
+     */
+    public function testDeleteUnknowTaskWithoutAdminUser(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Bad user role');
+        $url = '/api/tasks/' .$task->getId();
+
+        $this->logIn('main');
+
+        $this->client->request(
+            'DELETE',
+            $url,
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(403, $response->getStatusCode());
+    }
+
     /** 
      * Test user can't delete task if he is not the owner
      * @access public
@@ -423,6 +489,37 @@ class ApiControllerTest extends WebTestCase
         $link = $crawler->filter('.delete-task-link')->eq(3)->attr('href');
 
         $this->assertEquals(1, preg_match($linkRegex, $link));
+    }
+
+    /**
+     * @access public
+     * Test get unknow tasks with ajax
+     *
+     * @return void
+     */
+    public function testGetUnknowTasks(): void
+    {
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $task = $manager->getRepository(Task::class)->findOneByTitle('Test unknow task ajax');
+
+        $this->logIn('admin');
+
+        $this->client->request(
+            'GET',
+            '/api/tasks/unknow/1',
+            array(),
+            array(),
+            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+        );
+
+        $datas = json_decode($this->client->getResponse()->getContent(), true);
+        
+        $firstTask = $datas[9];
+
+        $this->assertEquals(10, count($datas));
+
+        $this->assertEquals($task->getId(), $firstTask['id']);
+        $this->assertNotEmpty($firstTask['title']);
     }
 
     /**

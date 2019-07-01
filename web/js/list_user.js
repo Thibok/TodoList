@@ -1,9 +1,29 @@
 $(function () {
     const ajaxLoaderImgPath = "/img/ajax-loader.gif";
     const userPerPage = 10;
-    const apiUserUrl = "/api/users/";
+    const apiUserUrlProdRegex = new RegExp("^\/app.php\/api\/users\/[0-9]+$");
+    const userUrlProdRegex = new RegExp("^\/app.php\/users\/[0-9]+\/edit$");
 
     var usersLength = $(".user-row").length;
+    var userUrl = $(".edit-user-link").eq(0).attr("href");
+    var apiUserUrl = $("#loadMoreUsers").attr("data-path");
+
+
+    if (apiUserUrl !== undefined) {
+        if (apiUserUrl.match(apiUserUrlProdRegex)) {
+            apiUserUrl = "/app.php/api/users/";
+        } else {
+            apiUserUrl = "/api/users/";
+        }
+    }
+
+    if (userUrl !== undefined) {
+        if (userUrl.match(userUrlProdRegex)) {
+            userUrl = "/app.php/users/";
+        } else {
+            userUrl = "/users/";
+        }
+    }
 
     function createAjaxLoader () {
         let loadImg = $("<div id='ajaxLoader' class='w-100 text-center'><img class='mb-2 mt-2' src='" + ajaxLoaderImgPath + "' alt='loader'/></div>");
@@ -41,7 +61,7 @@ $(function () {
 
         let tdEdit = $("<td></td>");
         let editUserBtn = $("<a class='btn btn-success btn-sm edit-user-link'>Edit</a>");
-        editUserBtn.attr("href", "users/" + id + "/edit");
+        editUserBtn.attr("href", userUrl + id + "/edit");
 
         tdEdit.append(editUserBtn);
 

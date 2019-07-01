@@ -87,7 +87,7 @@ class ApiControllerTest extends WebTestCase
         
         $firstTask = $datas[0];
 
-        $this->assertEquals(10, count($datas));
+        $this->assertEquals(12, count($datas));
 
         $this->assertEquals($task->getId(), $firstTask['id']);
         $this->assertNotEmpty($firstTask['title']);
@@ -119,7 +119,7 @@ class ApiControllerTest extends WebTestCase
         
         $firstTask = $datas[0];
 
-        $this->assertEquals(10, count($datas));
+        $this->assertEquals(12, count($datas));
 
         $this->assertEquals($task->getId(), $firstTask['id']);
         $this->assertNotEmpty($firstTask['title']);

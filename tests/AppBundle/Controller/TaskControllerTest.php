@@ -374,7 +374,7 @@ class TaskControllerTest extends WebTestCase
         $firstTaskName = $crawler->filter('.task-link')->eq(0)->text();
         $firstTaskContent = $crawler->filter('.task-content')->eq(0)->text();
 
-        $this->assertEquals(10, $nbTasks);
+        $this->assertEquals(12, $nbTasks);
         $this->assertSame('My first task', $firstTaskName);
         $this->assertSame('A good task', $firstTaskContent);
     }
@@ -432,10 +432,10 @@ class TaskControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/tasks/finish');
 
         $nbTasks = $crawler->filter('.card')->count();
-        $firstTaskName = $crawler->filter('.task-link')->eq(2)->text();
-        $firstTaskContent = $crawler->filter('.task-content')->eq(2)->text();
+        $firstTaskName = $crawler->filter('.task-link')->eq(3)->text();
+        $firstTaskContent = $crawler->filter('.task-content')->eq(3)->text();
 
-        $this->assertEquals(10, $nbTasks);
+        $this->assertEquals(12, $nbTasks);
         $this->assertSame('Im a finish task', $firstTaskName);
         $this->assertSame('Im a finish task', $firstTaskContent);
     }

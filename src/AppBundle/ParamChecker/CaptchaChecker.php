@@ -26,7 +26,6 @@ class CaptchaChecker
      * Constructor
      * @access public
      * @param ValidatorInterface $validator
-     * @param string $env
      * 
      * @return void
      */

@@ -4,12 +4,33 @@ $(function() {
     const currentIconTaskPath= "/img/current.png";
     const editIconTaskPath= "/img/edit.png";
     const deleteIconTaskPath= "/img/delete.png";
-    const taskPerPage = 10;
-    const apiTaskUrl = "/api/tasks/";
+    const taskPerPage = 12;
+    const apiTaskUrlProdRegex = new RegExp("^\/app\.php\/api\/tasks\/(current|finish|unknow)\/[0-9]+$");
+    const taskUrlProdRegex = new RegExp("^\/app.php\/tasks\/[0-9]+\/(toggle|edit)$");
 
     var tasksLength = $(".task-container").length;
     var unknowTaskLength = $(".unknow-task-container").length;
     var viewTaskModal = new jBox("Modal");
+
+    var apiTaskUrl = $("#loadMoreTasks").attr("data-path");
+    var taskUrl = $(".edit-task-link").eq(0).attr("href");
+
+    if (apiTaskUrl !== undefined) {
+        if (apiTaskUrl.match(apiTaskUrlProdRegex)) {
+            apiTaskUrl = "/app.php/api/tasks/";
+        } else {
+            apiTaskUrl = "/api/tasks/";
+        }
+    }
+
+    if (taskUrl !== undefined) {
+
+        if (taskUrl.match(taskUrlProdRegex)) {
+            taskUrl = "/app.php/tasks/";
+        } else {
+            taskUrl = "/tasks/";
+        }
+    }
 
     function createAjaxLoader (id) {
         let loadImg = $("<img id=" + id +" class='mb-2 mt-3' src='" + ajaxLoaderImgPath + "' alt='loader'/>");
@@ -88,7 +109,7 @@ $(function() {
 
         let taskCardFooter = $("<div class='card-footer'></div>");
         let taskCardFooterToggleLink = $("<a class='toggle-task-link'></a>");
-        taskCardFooterToggleLink.attr("href", "/tasks/" + id + "/toggle");
+        taskCardFooterToggleLink.attr("href", taskUrl + id + "/toggle");
         let taskCardFooterToggleImg = $("<img class='mr-2'/>");
 
         if (status === "current") {
@@ -105,7 +126,7 @@ $(function() {
         taskCardFooterToggleLink.append(taskCardFooterToggleImg);
 
         let taskCardFooterEditLink = $("<a class='edit-task-link' title='Editer'></a>");
-        taskCardFooterEditLink.attr("href", "/tasks/" + id + "/edit");
+        taskCardFooterEditLink.attr("href", taskUrl + id + "/edit");
 
         let taskCardFooterEditImg = $("<img class='mr-2' alt='Editer une tache'>");
         taskCardFooterEditImg.attr("src", editIconTaskPath);
@@ -114,7 +135,7 @@ $(function() {
 
         let taskCardFooterDeleteLink = $("<a class='delete-task-link' title='Supprimer'></a>");
         taskCardFooterDeleteLink.attr("id", "task-delete-link-" + tasksLength);
-        taskCardFooterDeleteLink.attr("href", "/tasks/" + id + "/delete");
+        taskCardFooterDeleteLink.attr("href", apiTaskUrl + id);
 
         taskCardFooterDeleteLink.click(function (event) {
             event.preventDefault();

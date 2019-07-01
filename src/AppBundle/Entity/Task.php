@@ -22,7 +22,7 @@ class Task
     /**
      * @var int
      */
-    const TASK_PER_PAGE = 10;
+    const TASK_PER_PAGE = 12;
     
     /**
      * @var int

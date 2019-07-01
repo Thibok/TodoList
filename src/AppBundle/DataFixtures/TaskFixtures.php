@@ -151,16 +151,28 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $taskFinish8->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $taskFinish9 = new Task;
-        $taskFinish9->setTitle('Path edit task');
-        $taskFinish9->setContent('Path edit task');
+        $taskFinish9->setTitle('Im a finish task');
+        $taskFinish9->setContent('Im a finish task');
         $taskFinish9->toggle(true);
         $taskFinish9->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $taskFinish10 = new Task;
-        $taskFinish10->setTitle('Test finish ajax');
-        $taskFinish10->setContent('Im a finish task');
+        $taskFinish10->setTitle('Path edit task');
+        $taskFinish10->setContent('Path edit task');
         $taskFinish10->toggle(true);
         $taskFinish10->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
+
+        $taskFinish11 = new Task;
+        $taskFinish11->setTitle('Im a finish task');
+        $taskFinish11->setContent('Im a finish task');
+        $taskFinish11->toggle(true);
+        $taskFinish11->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
+
+        $taskFinish12 = new Task;
+        $taskFinish12->setTitle('Test finish ajax');
+        $taskFinish12->setContent('Im a finish task');
+        $taskFinish12->toggle(true);
+        $taskFinish12->setUser($this->getReference(UserFixtures::MAIN_USER_TEST_REFERENCE));
 
         $unknowTask1 = new Task;
         $unknowTask1->setTitle('Test unknow task ajax');
@@ -231,6 +243,8 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($taskFinish8);
         $manager->persist($taskFinish9);
         $manager->persist($taskFinish10);
+        $manager->persist($taskFinish11);
+        $manager->persist($taskFinish12);
         $manager->persist($unknowTask1);
         $manager->persist($unknowTask2);
         $manager->persist($unknowTask3);

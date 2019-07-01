@@ -37,7 +37,7 @@
                 {% endfor %}
             </div>
             <div id="loadMoreTasksContainer" class="d-flex justify-content-center">
-                <button id="loadMoreTasks" class="btn btn-primary mb-4 mt-3">Voir plus</button>
+                <button id="loadMoreTasks" data-path="{{ path('tdl_api_tasks', {'status' : (isDone) ? 'finish' : 'current', 'page' : 1}) }}" class="btn btn-primary mb-4 mt-3">Voir plus</button>
             </div>
         </div>
         {% if is_granted('ROLE_ADMIN')%}

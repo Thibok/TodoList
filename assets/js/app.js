@@ -1,3 +1,5 @@
+require('../css/app.css');
+
 $(function () {
     $(".alert").hide();
     

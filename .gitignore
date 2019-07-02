@@ -37,6 +37,7 @@
 
 # Assets and user uploads
 /web/bundles/
+/web/build/
 
 # PHPUnit
 /app/phpunit.xml
@@ -55,3 +56,4 @@
 /.web-server-pid
 
 # End of https://www.gitignore.io/api/symfony
+node_modules

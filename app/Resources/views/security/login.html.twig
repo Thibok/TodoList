@@ -30,5 +30,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="{{ asset('js/login.js') }}" async defer></script>
+    {{ encore_entry_script_tags('login') }}
 {% endblock %}

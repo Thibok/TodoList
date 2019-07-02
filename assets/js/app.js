@@ -1,4 +1,4 @@
-require('../css/app.css');
+require("../css/app.css");
 
 $(function () {
     $(".alert").hide();

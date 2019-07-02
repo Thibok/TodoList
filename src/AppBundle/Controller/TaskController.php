@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * TaskController
@@ -90,15 +91,12 @@ class TaskController extends Controller
      * @param Request $request
      * @param CaptchaChecker $captchaChecker
      * @Route("/tasks/{id}/edit", name="tdl_task_edit", requirements={"id"="\d+"})
+     * @Security("user.isEqualTo(task.getUser())")
      * 
      * @return Response|RedirectResponse
      */
     public function editAction(Task $task, Request $request, CaptchaChecker $captchaChecker): Response
     {
-        if (!$this->getUser()->isEqualTo($task->getUser())) {
-            throw new AccessDeniedHttpException();
-        }
-
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
@@ -127,15 +125,12 @@ class TaskController extends Controller
      * @access public
      * @param Task $task
      * @Route("/tasks/{id}/toggle", name="tdl_task_toggle", requirements={"id"="\d+"})
+     * @Security("user.isEqualTo(task.getUser())")
      * 
      * @return RedirectResponse
      */
     public function toggleTaskAction(Task $task): RedirectResponse
     {
-        if (!$this->getUser()->isEqualTo($task->getUser())) {
-            throw new AccessDeniedHttpException();
-        }
-
         $task->toggle(!$task->isDone());
 
         try {

@@ -6,7 +6,7 @@
 {% block body %}
     <div class="row flex-column mx-0">
         <div class="col-lg-5 mx-auto">
-            {% include 'form/user_form.html.twig' with {'userPage': 'edit'} %}
+            {% include 'form/_user_form.html.twig' with {'userPage': 'edit'} %}
         </div>
         <div class="mt-4">
             <a href="{{ path('tdl_user_list') }}" class="btn btn-primary">Retour à la liste des utilisateurs</a>

@@ -129,6 +129,7 @@ class ApiControllerTest extends WebTestCase
     /**
      * Test user can't access if not admin
      * @access public
+     * @param string $url
      * @dataProvider apiAdminUrlProvider
      * 
      * @return void
@@ -154,7 +155,7 @@ class ApiControllerTest extends WebTestCase
      * Admin url provider
      * @access public
      *
-     * @return void
+     * @return array
      */
     public function apiAdminUrlProvider(): array
     {

@@ -140,7 +140,7 @@ class ApiController extends Controller
     /**
      * Delete task with Ajax
      * @access public
-     * @param int $id
+     * @param Task $task
      * @Route(
      *     "/api/tasks/{id}",
      *     name="tdl_api_tasks_delete",

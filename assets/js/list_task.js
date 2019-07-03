@@ -221,6 +221,33 @@ $(function() {
         return taskContainer;
     }
 
+    function goToDeleteUnknowTask() {
+        let url = $("#unknowTaskToRemove").text();
+        $("#unknowTaskToRemove").text("");
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(response) {
+                $("a[href$='" + url + "']").parent().remove();
+                unknowTaskLength--;
+
+                confirmDelete("La tâche a bien été supprimée.");
+
+                if (unknowTaskLength === 0 && $("#loadMoreUnknowTasks").length === 0) {
+                    let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
+                    noTasks.text("Il n'y a aucune tâches inconnues");
+    
+                    $("#unknowTaskRow").append(noTasks);
+                    $("#unknowTasksContainer").remove();
+                }
+            },
+            error: function () {
+                console.log("Une erreur est survenue");
+            }
+        });
+    }
+
     var unknowTaskModal = new jBox("Confirm", {
         cancelButton: "Annuler",
         confirmButton: "Supprimer",
@@ -266,33 +293,6 @@ $(function() {
         taskContainer.append(taskLiDeleteLink);
 
         return taskContainer;
-    }
-
-    function goToDeleteUnknowTask() {
-        let url = $("#unknowTaskToRemove").text();
-        $("#unknowTaskToRemove").text("");
-
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            success: function(response) {
-                $("a[href$='" + url + "']").parent().remove();
-                unknowTaskLength--;
-
-                confirmDelete("La tâche a bien été supprimée.");
-
-                if (unknowTaskLength === 0 && $("#loadMoreUnknowTasks").length === 0) {
-                    let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
-                    noTasks.text("Il n'y a aucune tâches inconnues");
-    
-                    $("#unknowTaskRow").append(noTasks);
-                    $("#unknowTasksContainer").remove();
-                }
-            },
-            error: function () {
-                console.log("Une erreur est survenue");
-            }
-        });
     }
 
     function loadMoreTasks (button, event) {

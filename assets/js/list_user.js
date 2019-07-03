@@ -51,9 +51,9 @@ $(function () {
         tdEmail.text(email);
 
         if (role === "ROLE_USER") {
-            role = 'Utilisateur';
+            role = "Utilisateur";
         } else if(role === "ROLE_ADMIN") {
-            role = 'Administrateur';
+            role = "Administrateur";
         }
 
         let tdRole = $("<td class='td-user-role'></td>");

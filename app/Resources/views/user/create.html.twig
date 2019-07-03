@@ -6,7 +6,7 @@
 {% block body %}
     <div class="row flex-column mx-0">
         <div class="col-lg-5 mx-auto">
-            {% include 'form/user_form.html.twig' with {'userPage': 'create'} %}
+            {% include 'form/_user_form.html.twig' with {'userPage': 'create'} %}
         </div>
         <div class="mt-4">
             <a href="{{ path('tdl_user_list') }}" class="btn btn-primary">Retour à la liste des utilisateurs</a>
@@ -17,5 +17,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="{{ asset('js/manage_user.js') }}" async defer></script>
+    {{ encore_entry_script_tags('manage_user') }}
 {% endblock %}

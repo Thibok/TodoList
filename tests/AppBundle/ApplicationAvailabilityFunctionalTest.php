@@ -155,7 +155,6 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
     /**
      * Test auth user can't access page for admin
      * @access public
-     * @param string $url
      * 
      * @return void
      */

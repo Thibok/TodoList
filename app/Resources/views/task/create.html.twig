@@ -4,7 +4,7 @@
 {% block body %}
     <div class="row flex-column mx-0">
         <div class="col-lg-5 mx-auto">
-            {% include 'form/task_form.html.twig' with {'taskPage': 'create'} %}
+            {% include 'form/_task_form.html.twig' with {'taskPage': 'create'} %}
         </div>
         <div class="mt-4">
             <a href="{{ path('tdl_task_list', {'status' : 'current'}) }}" class="btn btn-primary">Retour à la liste des tâches</a>
@@ -15,5 +15,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="{{ asset('js/manage_task.js') }}" async defer></script>
+    {{ encore_entry_script_tags('manage_task') }}
 {% endblock %}

@@ -154,7 +154,6 @@ class SecurityControllerTest extends WebTestCase
     /**
      * Test auth user can't access login page
      * @access public
-     * @param string $url
      *
      * @return void
      */

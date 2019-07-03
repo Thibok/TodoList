@@ -190,7 +190,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * {@inheritdoc}
      */
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }

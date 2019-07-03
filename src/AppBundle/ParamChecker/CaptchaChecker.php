@@ -37,6 +37,7 @@ class CaptchaChecker
     /**
      * Check the value of captcha with CaptchaValidator
      * @access public
+     * @param Request $request
      * 
      * @return boolean
      */

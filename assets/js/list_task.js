@@ -68,6 +68,61 @@ $(function() {
         });
     }
 
+    function goToDeleteTask() {
+        let url = $("#taskToRemove").text();
+        $("#taskToRemove").text("");
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(response) {
+                $("a[href$='" + url + "']").parent().parent().parent().remove();
+                tasksLength--;
+
+                confirmDelete("La tâche a bien été supprimée.");
+
+                if (tasksLength === 0 && $("#loadMoreTasks").length === 0) {
+                    let noTasks = $("<p class='ml-3 mt-2 w-100' id='noTasks'></p>");
+                    noTasks.text("Il n'y a aucune " + $("#taskTitleStatus").text().toLowerCase());
+    
+                    $("#taskRow").append(noTasks);
+                }
+            },
+            error: function () {
+                console.log("Une erreur est survenue");
+            }
+        });
+    }
+
+    var deleteTaskModal = new jBox("Confirm", {
+        cancelButton: "Annuler",
+        confirmButton: "Supprimer",
+        confirm: goToDeleteTask,
+    });
+
+    function createViewTaskModal(id) {
+        let taskTitle = $("#task-title-link-" + id).text();
+        let taskContent = $("#task-content-" + id).text();
+
+        let modalTitle = $("<h4 class='text-primary text-center'>" + taskTitle + "</h4>");
+        let modalContent = $("<p>" + taskContent + "</p>");
+
+        viewTaskModal.setTitle(modalTitle);
+        viewTaskModal.setContent(modalContent);
+    }
+
+    function createDeleteTaskModal(link) {
+        let taskToRemoveLink = $("<p id='taskToRemove'>" + link + "</p>").hide();
+        let modalContent = $("<p>Etes vous sur de vouloir supprimer cette tâche ?</p>");
+
+        let modalContainer = $("<div></div>");
+
+        modalContainer.append(taskToRemoveLink);
+        modalContainer.append(modalContent);
+
+        deleteTaskModal.setContent(modalContainer);
+    }
+
     function createTaskElement(id, title, content) {
         let status;
 
@@ -119,7 +174,7 @@ $(function() {
 
         } else if (status === "finish") {
             taskCardFooterToggleLink.attr("title", "Non terminer");
-            taskCardFooterToggleImg.attr('src', currentIconTaskPath);
+            taskCardFooterToggleImg.attr("src", currentIconTaskPath);
             taskCardFooterToggleImg.attr("alt", "Marquer comme non terminée");
         }
 
@@ -166,6 +221,51 @@ $(function() {
         return taskContainer;
     }
 
+    function goToDeleteUnknowTask() {
+        let url = $("#unknowTaskToRemove").text();
+        $("#unknowTaskToRemove").text("");
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(response) {
+                $("a[href$='" + url + "']").parent().remove();
+                unknowTaskLength--;
+
+                confirmDelete("La tâche a bien été supprimée.");
+
+                if (unknowTaskLength === 0 && $("#loadMoreUnknowTasks").length === 0) {
+                    let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
+                    noTasks.text("Il n'y a aucune tâches inconnues");
+    
+                    $("#unknowTaskRow").append(noTasks);
+                    $("#unknowTasksContainer").remove();
+                }
+            },
+            error: function () {
+                console.log("Une erreur est survenue");
+            }
+        });
+    }
+
+    var unknowTaskModal = new jBox("Confirm", {
+        cancelButton: "Annuler",
+        confirmButton: "Supprimer",
+        confirm: goToDeleteUnknowTask,
+    });
+
+    function createDeleteUnknowTaskModal(link) {
+        let taskToRemoveLink = $("<p id='unknowTaskToRemove'>" + link + "</p>").hide();
+        let modalContent = $("<p>Etes vous sur de vouloir supprimer cette tâche ?</p>");
+
+        let modalContainer = $("<div></div>");
+
+        modalContainer.append(taskToRemoveLink);
+        modalContainer.append(modalContent);
+
+        unknowTaskModal.setContent(modalContainer);
+    }
+
     function createUnknowTaskElement(id, title) {
         let taskContainer = $("<div class='d-flex justify-content-around px-5 mb-1 unknow-task-container'>");
 
@@ -193,106 +293,6 @@ $(function() {
         taskContainer.append(taskLiDeleteLink);
 
         return taskContainer;
-    }
-
-    function createViewTaskModal(id) {
-        let taskTitle = $("#task-title-link-" + id).text();
-        let taskContent = $("#task-content-" + id).text();
-
-        let modalTitle = $("<h4 class='text-primary text-center'>" + taskTitle + "</h4>");
-        let modalContent = $("<p>" + taskContent + "</p>");
-
-        viewTaskModal.setTitle(modalTitle);
-        viewTaskModal.setContent(modalContent);
-    }
-
-    function goToDeleteUnknowTask() {
-        let url = $("#unknowTaskToRemove").text();
-        $("#unknowTaskToRemove").text('');
-
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            success: function(response) {
-                $("a[href$='" + url + "']").parent().remove();
-                unknowTaskLength--;
-
-                confirmDelete("La tâche a bien été supprimée.");
-
-                if (unknowTaskLength === 0 && $("#loadMoreUnknowTasks").length === 0) {
-                    let noTasks = $("<p class='px-5 mt-2 ml-1' id='noTasks'></p>");
-                    noTasks.text("Il n'y a aucune tâches inconnues");
-    
-                    $("#unknowTaskRow").append(noTasks);
-                    $("#unknowTasksContainer").remove();
-                }
-            },
-            error: function () {
-                console.log("Une erreur est survenue");
-            }
-        });
-    }
-
-    function goToDeleteTask() {
-        let url = $("#taskToRemove").text();
-        $("#taskToRemove").text('');
-
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            success: function(response) {
-                $("a[href$='" + url + "']").parent().parent().parent().remove();
-                tasksLength--;
-
-                confirmDelete("La tâche a bien été supprimée.");
-
-                if (tasksLength === 0 && $("#loadMoreTasks").length === 0) {
-                    let noTasks = $("<p class='ml-3 mt-2 w-100' id='noTasks'></p>");
-                    noTasks.text("Il n'y a aucune " + $("#taskTitleStatus").text().toLowerCase());
-    
-                    $("#taskRow").append(noTasks);
-                }
-            },
-            error: function () {
-                console.log("Une erreur est survenue");
-            }
-        });
-    }
-
-    var deleteTaskModal = new jBox("Confirm", {
-        cancelButton: "Annuler",
-        confirmButton: "Supprimer",
-        confirm: goToDeleteTask,
-    });
-
-    var unknowTaskModal = new jBox("Confirm", {
-        cancelButton: "Annuler",
-        confirmButton: "Supprimer",
-        confirm: goToDeleteUnknowTask,
-    });
-
-    function createDeleteTaskModal(link) {
-        let taskToRemoveLink = $("<p id='taskToRemove'>" + link + "</p>").hide();
-        let modalContent = $("<p>Etes vous sur de vouloir supprimer cette tâche ?</p>");
-
-        let modalContainer = $("<div></div>");
-
-        modalContainer.append(taskToRemoveLink);
-        modalContainer.append(modalContent);
-
-        deleteTaskModal.setContent(modalContainer);
-    }
-
-    function createDeleteUnknowTaskModal(link) {
-        let taskToRemoveLink = $("<p id='unknowTaskToRemove'>" + link + "</p>").hide();
-        let modalContent = $("<p>Etes vous sur de vouloir supprimer cette tâche ?</p>");
-
-        let modalContainer = $("<div></div>");
-
-        modalContainer.append(taskToRemoveLink);
-        modalContainer.append(modalContent);
-
-        unknowTaskModal.setContent(modalContainer);
     }
 
     function loadMoreTasks (button, event) {

@@ -220,7 +220,7 @@ class User implements UserInterface, EquatableInterface, \Serializable
     /**
      * {@inheritDoc}
      */
-    public function isEqualTo(UserInterface $user): bool
+    public function isEqualTo(UserInterface $user = null): bool
     {
         if (!$user instanceof User) {
             return false;

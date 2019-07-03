@@ -38,7 +38,7 @@ class SecurityController extends Controller
      * 
      * @return void
      */
-    public function logoutAction() 
+    public function logoutAction(): void
     {
     
     }

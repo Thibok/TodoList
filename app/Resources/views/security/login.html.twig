@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import "macros/form_elements.html.twig" as formElements %}
+{% import "macros/_form_elements.html.twig" as formElements %}
 {% block title %} {{ parent() }} Login{% endblock %}
 
 {% block body %}
@@ -30,5 +30,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="{{ asset('js/login.js') }}" async defer></script>
+    {{ encore_entry_script_tags('login') }}
 {% endblock %}

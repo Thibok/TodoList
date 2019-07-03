@@ -45,5 +45,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/list_user.js') }}" async defer></script>
+    {{ encore_entry_script_tags('list_user') }}
 {% endblock %}

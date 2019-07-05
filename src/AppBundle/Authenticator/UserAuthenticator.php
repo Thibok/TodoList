@@ -114,7 +114,6 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator
         return [
             'username' => $username,
             'password' => $password,
-            'captcha' => $captcha
         ];
     }
 

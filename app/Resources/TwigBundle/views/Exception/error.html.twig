@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}To Do List{% endblock %}
+{% block body %}
+    <div class="row flex-column m-auto">
+        <div class="col-md-12 text-center" id="error_block">
+            <h1>{{ status_code }}</h1>
+            <p>Il y a eu un petit problème...</p>
+            <a role="button" class="btn btn-primary" href="{{ path('tdl_global_homepage') }}">Go to home</a>
+        </div>
+    </div>
+{% endblock %}

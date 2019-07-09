@@ -1,14 +1,21 @@
 {% extends 'base.html.twig' %}
-
-{% block header_title %}<h1>Créer un utilisateur</h1>{% endblock %}
+{% block title %} {{ parent() }} Créer un utilisateur{% endblock %}
+{% block header_title %}<h1 class="text-center mt-4">Créer un utilisateur</h1>{% endblock %}
 {% block header_img %}{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {{ form_start(form, {'action' : path('user_create')}) }}
-            {{ form_widget(form) }}
-
-            <button type="submit" class="btn btn-success pull-right">Ajouter</button>
-        {{ form_end(form) }}
+    <div class="row flex-column mx-0">
+        <div class="col-lg-5 mx-auto">
+            {% include 'form/_user_form.html.twig' with {'userPage': 'create'} %}
+        </div>
+        <div class="mt-4">
+            <a href="{{ path('tdl_user_list') }}" class="btn btn-primary">Retour à la liste des utilisateurs</a>
+        </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    {{ encore_entry_script_tags('manage_user') }}
 {% endblock %}

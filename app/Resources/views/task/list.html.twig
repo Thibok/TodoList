@@ -1,36 +1,61 @@
 {% extends 'base.html.twig' %}
+{% block title %} {{ parent() }} Consulter les tâches {{ (isDone) ? 'terminées' : 'en cours'}}{% endblock %}
 
 {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">{% endblock %}
 
 {% block body %}
-    <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
-    <div class="row">
-        {% for task in tasks %}
-        <div class="col-sm-4 col-lg-4 col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                    <h4 class="pull-right">
-                        {% if task.isDone %}<span class="glyphicon glyphicon-ok"></span>{% else %}<span class="glyphicon glyphicon-remove"></span>{% endif %}
-                    </h4>
-                    <h4><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h4>
-                    <p>{{ task.content }}</p>
+    <div class="row mt-2">
+        <div class="{{ (is_granted('ROLE_ADMIN')) ? 'col-lg-8' : 'col-lg-12' }}">
+            <div id="titleContainerTask" class="d-flex mt-1">
+                <h1 id="taskTitleStatus" class="mt-1">Tâches {{ (isDone) ? 'terminées' : 'en cours'}}</h1>
+                <div id="taskControls">
+                    <a href="{{ path('tdl_task_create') }}" class="btn btn-primary btn-sm ml-3 mt-2">Créer une tâche</a>
+                    <a href="{{ path('tdl_task_list', {'status' : (isDone) ? 'current' : 'finish'}) }}" class="btn btn-warning text-white btn-sm ml-2 mt-2">Voir les tâches {{ (isDone) ? 'en cours' : 'terminées'}}</a>
                 </div>
-                <div>
-                    <form action="{{ path('task_toggle', {'id' : task.id }) }}">
-                        <button class="btn btn-success btn-sm pull-right">
-                            {% if not task.isDone %}Marquer comme faite{% else %}Marquer non terminée{% endif %}
-                        </button>
-                    </form>
-                    <form action="{{ path('task_delete', {'id' : task.id }) }}">
-                        <button class="btn btn-danger btn-sm pull-right">Supprimer</button>
-                    </form>
-                </div>
+            </div>     
+            <div class="row" id="taskRow">
+                {% for index, task in tasks %}
+                    <div class="col-md-3 mt-2 mb-1 task-container">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title task-title text-truncate"><a id="task-title-link-{{ index }}" class="text-decoration-none task-link" href="#">{{ task.title }}</a></h4>
+                                <p id="task-content-{{ index }}" class="text-truncate card-text task-content">{{ task.content }}</p>
+                            </div>
+                            <div class="card-footer">
+                                {% if isDone %}
+                                    <a class="toggle-task-link" title="Non terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/current.png') }}" alt="Marquer comme non terminée"/></a>
+                                {% else %}
+                                    <a class="toggle-task-link" title="Terminer" href="{{ path('tdl_task_toggle', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/terminate.png') }}" alt="Marquer comme terminée"/></a>
+                                {% endif %}
+                                <a class="edit-task-link" title="Editer" href="{{ path('tdl_task_edit', {'id' : task.id}) }}"><img class="mr-1" src="{{ asset('img/edit.png') }}" alt="Editer une tache"/></a>
+                                <a class="delete-task-link" title="Supprimer" id="task-delete-link-{{ index }}" href="{{ path('tdl_api_tasks_delete', {'id' : task.id}) }}"><img src="{{ asset('img/delete.png') }}" alt="Supprimer une tache"/></a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="ml-3 mt-2 w-100" id="noTasks">Il n'y a aucune tâches {{ (isDone) ? 'terminées' : 'en cours' }}</p>
+                {% endfor %}
+            </div>
+            <div id="loadMoreTasksContainer" class="d-flex justify-content-center">
+                <button id="loadMoreTasks" data-path="{{ path('tdl_api_tasks', {'status' : (isDone) ? 'finish' : 'current', 'page' : 1}) }}" class="btn btn-primary mb-4 mt-3">Voir plus</button>
             </div>
         </div>
-        {% else %}
-            <div class="alert alert-warning" role="alert">
-                Il n'y a pas encore de tâche enregistrée. <a href="{{ path('task_create') }}" class="btn btn-warning pull-right">Créer une tâche</a>
+        {% if is_granted('ROLE_ADMIN')%}
+            <div class="col-lg-4">
+                <h1 class="mt-2 text-center">Tâches inconnues</h1> 
+                <div class="row" id="unknowTaskRow">
+                    <ul id="unknowTasksContainer" class="w-100 mt-2"></ul>
+                </div>
+                <div id="loadMoreUnknowTasksContainer" class="d-flex justify-content-center">
+                    <button id="loadMoreUnknowTasks" class="btn btn-primary mb-4 mt-2">Voir plus</button>
+                </div>    
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.0.3/dist/jBox.all.min.js"></script>
+    {{ encore_entry_script_tags('list_task') }}
 {% endblock %}

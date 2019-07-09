@@ -1,93 +1,237 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * Task (Entity)
+ */
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
- * @ORM\Table
+ * Task
+ * 
+ * @ORM\Table(name="tdl_task")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TaskRepository")
  */
 class Task
 {
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     */
+    const TASK_PER_PAGE = 12;
+    
+    /**
+     * @var int
+     * @access private
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     * @access private
+     * @ORM\Column(name="createdAt", type="datetime")
      */
     private $createdAt;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     * @access private
+     * @ORM\Column(name="title", type="string", length=60)
      * @Assert\NotBlank(message="Vous devez saisir un titre.")
+     * @Assert\Length(
+     *      min=2,
+     *      minMessage="Le titre doit etre de 2 caractères minimum.",
+     *      max=50,
+     *      maxMessage="Le titre doit etre de 50 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern="/^([a-zA-Z0-9]+ ?[a-zA-Z0-9]+)+$/",
+     *      message="Le titre ne peut contenir ques des lettres, des chiffres et des espaces."
+     * )
      */
     private $title;
 
     /**
-     * @ORM\Column(type="text")
+     * @var string
+     * @access private
+     * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank(message="Vous devez saisir du contenu.")
+     * @Assert\Length(
+     *      max=500,
+     *      maxMessage="Le contenu doit etre de 500 caractères maximum."
+     * )
+     * @Assert\Regex(
+     *      pattern="/[<>]/",
+     *      match=false,
+     *      message="Le contenu ne doit pas contenir de < ou >"
+     * )
      */
     private $content;
-
+    
     /**
-     * @ORM\Column(type="boolean")
+     * @var boolean
+     * @access private
+     * @ORM\Column(name="isDone", type="boolean")
      */
     private $isDone;
 
+    /**
+     * @var User
+     * @access private
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $user;
+
+    /**
+     * Constructor
+     * @access public
+     * 
+     * @return void
+     */
     public function __construct()
     {
         $this->createdAt = new \Datetime();
         $this->isDone = false;
     }
 
-    public function getId()
+    /**
+     * Get id
+     * @access public
+     * 
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getCreatedAt()
+    /**
+     * Get createdAt
+     * @access public
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt($createdAt)
+    /**
+     * Set createdAt
+     * @access public
+     * @param \DateTime $createdAt
+     * 
+     * @return Task
+     */
+    public function setCreatedAt($createdAt): Task
     {
         $this->createdAt = $createdAt;
+
+        return $this;
     }
 
-    public function getTitle()
+    /**
+     * Get title
+     * @access public
+     *
+     * @return string
+     */
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle($title)
+    /**
+     * Set title
+     * @access public
+     * @param string $title
+     * 
+     * @return Task
+     */
+    public function setTitle($title): Task
     {
         $this->title = $title;
+
+        return $this;
     }
 
-    public function getContent()
+    /**
+     * Get content
+     * @access public
+     * 
+     * @return string
+     */
+    public function getContent(): ?string
     {
         return $this->content;
     }
 
-    public function setContent($content)
+    /**
+     * Set content
+     * @access public
+     * @param string $content
+     * 
+     * @return Task
+     */
+    public function setContent($content): Task
     {
         $this->content = $content;
+
+        return $this;
     }
 
-    public function isDone()
+    /**
+     * Check task is done
+     * @access public
+     * 
+     * @return boolean
+     */
+    public function isDone(): bool
     {
         return $this->isDone;
     }
 
-    public function toggle($flag)
+    /**
+     * Toggle task
+     * @access public
+     * @param boolean $flag
+     * 
+     * @return void
+     */
+    public function toggle($flag): void
     {
         $this->isDone = $flag;
+    }
+
+    /**
+     * Set user
+     * @access public
+     * @param User|null $user
+     *
+     * @return Task
+     */
+    public function setUser(User $user = null): Task
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     * @access public
+     * 
+     * @return User|null
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 }

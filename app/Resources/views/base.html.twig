@@ -4,17 +4,16 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-
-        <title>To Do List app</title>
-
+        <title>{% block title %}To Do List -{% endblock %}</title>
         <!-- Bootstrap Core CSS -->
-        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Jbox CSS -->
+        <link href="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.0.3/dist/jBox.all.min.css" rel="stylesheet">
         <!-- Custom CSS -->
-        <link href="{{ asset('css/shop-homepage.css') }}" rel="stylesheet">
+        {{ encore_entry_link_tags('app') }}
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,39 +24,52 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;" role="navigation">
+        <nav id="navContainer" class="navbar navbar-expand-sm navbar-light fixed-top">
             <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">To Do List app</a>
-
+                <div>
+                    <a class="text-decoration-none" href="{{ path('tdl_global_homepage') }}">To Do List app</a>
                     <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_global_homepage') }}">Accueil</a>
+                            </li>
+                        {% endif %}  
+                        {% if is_granted('ROLE_ADMIN')%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_user_create') }}">Créer un utilisateur</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_logout') }}">Déconnexion</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('tdl_login') }}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
         </nav>
 
         <!-- Page Content -->
-        <div class="container">
+        <div id="wrap" class="container">
             <div class="row">
-                <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
-
-                {% if app.user %}
-                <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
-                {% endif %}
-
-                {% if not app.user and 'login' != app.request.attributes.get('_route') %}
-                <a href="{{ path('login') }}" class="btn btn-success">Se connecter</a>
-                {% endif %}
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    {% for flash_message in app.session.flashBag.get('success') %}
+                <div id="homepageHeaderContainer" class="col-md-12">
+                    {% for flash_message in app.flashes('success') %}
                         <div class="alert alert-success" role="alert">
                             <strong>Superbe !</strong> {{ flash_message }}
                         </div>
                     {% endfor %}
 
-                    {% for flash_message in app.session.flashBag.get('error') %}
+                    {% for flash_message in app.flashes('error') %}
                         <div class="alert alert-danger" role="alert">
                             <strong>Oops !</strong> {{ flash_message }}
                         </div>
@@ -68,9 +80,9 @@
                 </div>
             </div>
 
-            <br />
+            
 
-            <div class="row">
+            <div id="main" class="row">
                 <div class="col-md-12">
                     {% block body %}{% endblock %}
                 </div>
@@ -78,20 +90,16 @@
         </div>
         <!-- /.container -->
 
-        <div class="container">
-
-            <hr>
-            <footer>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p class="pull-right">Copyright &copy; OpenClassrooms</p>
-                    </div>
-                </div>
+        <div id="footerContainer" class="container">
+            <footer class="page-footer">
+                <div class="footer-copyright text-right">Copyright &copy; OpenClassrooms</div>
             </footer>
-
         </div>
 
-        <script src="{{ asset('js/jquery.js') }}"></script>
-        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+        {% block javascripts %}
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>

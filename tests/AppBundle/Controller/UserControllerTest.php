@@ -123,7 +123,6 @@ class UserControllerTest extends WebTestCase
         $userEdited = $manager->getRepository(User::class)->findOneByUsername('usernameUpdated');
 
         $username = $userEdited->getUsername();
-        $password = $userEdited->getPassword();
         $email = $userEdited->getEmail();
         $role = $userEdited->getRole();
 
